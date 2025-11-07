@@ -11,14 +11,19 @@ const client = new Client({
 });
 
 client.once("ready", () => {
-  console.log(`🤖 Logged in as ${client.user.tag}`);
+  console.log(`Logged in as ${client.user.tag}`);
 });
 
-client.on("messageCreate", (message) => {
+client.on("messageCreate", async (message) => {
   if (message.author.bot) return;
 
   if (message.content.includes("tenor.com")) {
-    console.log(`🎬 ${message.author.username} posted a Tenor GIF: ${message.content}`);
+    console.log(`${message.author.username} posted a Tenor GIF: ${message.content}`);
+    try {
+        await message.react("🎬");
+    } catch (error) {
+        console.error("Failed to add reaction:", error);
+    }
   }
 });
 
