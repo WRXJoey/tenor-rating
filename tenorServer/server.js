@@ -2,6 +2,7 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
+import { pool } from "./db.js";
 
 dotenv.config();
 const app = express();
@@ -19,4 +20,17 @@ app.get("/", (req, res) => {
 // Start server
 app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`);
+});
+
+//top gifs
+app.get("/api/top-gifs", async (req, res) => {
+  try {
+    const { rows } = await pool.query(
+      "SELECT discord_username, tenor_url, tenor_gif_id FROM tenor_logs"
+    );
+    res.json(rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Failed to fetch logs" });
+  }
 });

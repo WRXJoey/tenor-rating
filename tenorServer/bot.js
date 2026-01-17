@@ -1,5 +1,6 @@
 import { Client, GatewayIntentBits } from "discord.js";
 import fs from "fs";
+import { pool } from "./db.js";
 import dotenv from "dotenv";
 dotenv.config();
 
@@ -22,47 +23,28 @@ function extractTenorInfo(content) {
   };
 }
 
-
-
 client.once("ready", () => {
   console.log(`Logged in as ${client.user.tag}`);
 });
 
 client.on("messageCreate", async (message) => {
   if (message.author.bot) return;
+  if (!message.content.includes("tenor.com")) return;
 
-  if (message.content.includes("tenor.com")) {
-    const tenor = extractTenorInfo(message.content);
-    if (!tenor) return;
+  const tenor = extractTenorInfo(message.content);
+  if (!tenor) return;
 
-    logTenorUsage(
-      message.author.id,
-      tenor.tenorUrl,
-      tenor.tenorGifId
+  try {
+    await pool.query(
+      `INSERT INTO tenor_logs (discord_username, tenor_url, tenor_gif_id)
+       VALUES ($1, $2, $3)`,
+      [message.author.username, tenor.tenorUrl, tenor.tenorGifId]
     );
 
-    console.log(
-      `Logged → user:${message.author.id} gif:${tenor.tenorGifId}`
-    );
-
-    try {
-      await message.react("🎬");
-    } catch (err) {
-      console.error("Reaction failed:", err);
-    }
+    await message.react("🎬");
+    console.log("Saved:", message.author.username, tenor.tenorGifId);
+  } catch (err) {
+    console.error("DB insert failed:", err);
   }
 });
-function logTenorUsage(userId, tenorUrl, tenorGifId) {
-  const entry = {
-    userId,
-    tenorUrl,
-    tenorGifId,
-  };
-
-  fs.appendFileSync(
-    "tenor_logs.json",
-    JSON.stringify(entry) + "\n"
-  );
-}
-
 client.login(process.env.DISCORD_TOKEN);
