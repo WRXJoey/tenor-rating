@@ -4,7 +4,7 @@ import { pool } from "./db.js";
 import dotenv from "dotenv";
 dotenv.config();
 
-//just got news that discord is getting rid of tenor, hopefuilly this bot will still be useful or can be adapted F*CK 
+//just got news that discord is getting rid of tenor, hopefully this bot will still be useful or can be adapted F*CK 
 
 const client = new Client({
   intents: [

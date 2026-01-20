@@ -1,0 +1,27 @@
+{
+  "name": "tenor-rating",
+  "version": "1.0.0",
+  "description": "ill write a readme when it gets cool enough to warrent one",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "concurrently \"npm:client\" \"npm:api\" \"npm:bot\"",
+    "client": "npm run dev --prefix TenorApp/client",
+    "api": "npm run dev --prefix tenorServer",
+    "bot": "npm run bot:dev --prefix tenorServer"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/WRXJoey/tenor-rating.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/WRXJoey/tenor-rating/issues"
+  },
+  "homepage": "https://github.com/WRXJoey/tenor-rating#readme",
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  }
+}
