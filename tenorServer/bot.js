@@ -13,32 +13,41 @@ const client = new Client({
     GatewayIntentBits.MessageContent
   ],
 });
-function extractTenorInfo(content) {
-  const match = content.match(/https?:\/\/tenor\.com\/view\/[^\s]+-(\d+)/);
-  if (!match) return null;
+
+function extractTenorFromEmbeds(message) {
+  const embed = message.embeds.find(
+    e => e.provider?.name === "Tenor" || e.url?.includes("tenor.com")
+  );
+  if (!embed) return null;
 
   return {
-    tenorUrl: match[0],
-    tenorGifId: match[1],
+    tenorGifId: embed.url?.match(/-(\d+)/)?.[1] ?? null,
+    tenorUrl:
+      embed.video?.url ||
+      embed.thumbnail?.url ||
+      null,
   };
 }
-
 client.once("ready", () => {
   console.log(`Logged in as ${client.user.tag}`);
 });
 
 client.on("messageCreate", async (message) => {
   if (message.author.bot) return;
-  if (!message.content.includes("tenor.com")) return;
 
-  const tenor = extractTenorInfo(message.content);
-  if (!tenor) return;
+  const tenor = extractTenorFromEmbeds(message);
+  if (!tenor || !tenor.tenorUrl) return;
 
   try {
     await pool.query(
-      `INSERT INTO tenor_logs (discord_username, tenor_url, tenor_gif_id)
+      `INSERT INTO tenor_logs
+       (discord_username, tenor_url, tenor_gif_id)
        VALUES ($1, $2, $3)`,
-      [message.author.username, tenor.tenorUrl, tenor.tenorGifId]
+      [
+        message.author.username,
+        tenor.tenorUrl,  //returns media url
+        tenor.tenorGifId,
+      ]
     );
 
     await message.react("🎬");
