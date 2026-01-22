@@ -22,6 +22,7 @@
   margin: 0;
   font-size: 28px;
   line-height: 1.05;
+  text-align: center;
 }
 
 .lead {
@@ -44,49 +45,4 @@
   border-radius: 8px;
   cursor: pointer;
   font-weight: 600;
-}
-
-.ghost {
-  background: transparent;
-  border: 1px solid #cbd5e1;
-  padding: 8px 14px;
-  border-radius: 8px;
-  cursor: pointer;
-}
-
-.illustration {
-  min-width: 96px;
-  min-height: 96px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.emoji {
-  font-size: 48px;
-}
-
-.features {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 16px;
-  margin-top: 20px;
-}
-
-.card {
-  background: white;
-  border-radius: 10px;
-  padding: 16px;
-  box-shadow: 0 4px 14px rgba(2, 6, 23, 0.04);
-}
-
-.card-title {
-  margin: 0;
-  font-size: 16px;
-}
-
-.card-text {
-  margin-top: 8px;
-  color: #475569;
-  font-size: 13px;
 }
