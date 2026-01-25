@@ -16,6 +16,7 @@
   background: linear-gradient(180deg, #fff, #f8fafc);
   border-radius: 12px;
   box-shadow: 0 6px 20px rgba(2, 6, 23, 0.06);
+  justify-content: center;
 }
 
 .title {
