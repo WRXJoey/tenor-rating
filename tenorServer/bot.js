@@ -50,6 +50,10 @@ client.on("messageCreate", async (message) => {
     }
     return;
   }
+  if(message.content.trim() === '!j help') {
+    message.channel.send('Commands:\n!j ping - Check bot responsiveness\n!j stats - Get total logged Tenor GIFs\n!j help - Show this help message');
+    return;
+  }
 
   const tenor = extractTenorFromEmbeds(message);
   if (!tenor || !tenor.tenorUrl) return;
