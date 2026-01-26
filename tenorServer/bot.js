@@ -39,6 +39,17 @@ client.on("messageCreate", async (message) => {
     message.channel.send('Pong!');
     return;
   }
+  if(message.content.trim() === '!j stats') {
+    try {
+      const res = await pool.query('SELECT COUNT(*) FROM tenor_logs');
+      const count = res.rows[0].count;
+      message.channel.send(`Total Tenor GIFs logged: ${count}`);
+    } catch (err) {
+      console.error("DB query failed:", err);
+      message.channel.send('Error retrieving stats.');
+    }
+    return;
+  }
 
   const tenor = extractTenorFromEmbeds(message);
   if (!tenor || !tenor.tenorUrl) return;
