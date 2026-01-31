@@ -1,5 +1,4 @@
 import { Client, GatewayIntentBits } from "discord.js";
-import fs from "fs";
 import { pool } from "./db.js";
 import dotenv from "dotenv";
 dotenv.config();
