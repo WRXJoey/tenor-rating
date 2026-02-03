@@ -23,6 +23,7 @@ export default function TopGifs() {
 
   if (loading) return <p>Loading top GIFs...</p>;
   if (error) return <p>Error: {error}</p>;
+  if (rows.length === 0) return <p>No GIFs Found :( </p>;
 
   return (
     <div style={{ maxWidth: 900, margin: "0 auto", padding: 24 }}>
@@ -44,7 +45,17 @@ export default function TopGifs() {
         </thead>
         <tbody>
           {rows.map((r) => (
-            <tr key={r.tenor_gif_id}>
+              <tr key={`${r.tenor_gif_id}-${r.discord_username}-${r.tenor_url}`}>
+                <td style={{ padding: 8, borderBottom: "1px solid #eee" }}>
+                  {r.discord_username}
+                </td>
+
+                <td style={{ padding: 8, borderBottom: "1px solid #eee" }}>
+                  <a href={r.tenor_url} target="_blank" rel="noreferrer">
+                    open
+                  </a>
+                </td>
+
               <td style={{ padding: 8, borderBottom: "1px solid #eee" }}>
                 {isVideo(r.tenor_url) ? (
                   <video
@@ -63,14 +74,6 @@ export default function TopGifs() {
                     style={{ maxWidth: 200, maxHeight: 200, borderRadius: 8 }}
                   />
                 )}
-              </td>
-              <td style={{ padding: 8, borderBottom: "1px solid #eee" }}>
-                {r.discord_username}
-              </td>
-              <td style={{ padding: 8, borderBottom: "1px solid #eee" }}>
-                <a href={r.tenor_url} target="_blank" rel="noreferrer">
-                  open
-                </a>
               </td>
             </tr>
           ))}
