@@ -32,13 +32,13 @@ export default function TopGifs() {
       <table style={{ width: "100%", borderCollapse: "collapse" }}>
         <thead>
           <tr>
-          <th style={{ textAlign: "left", padding: 8, borderBottom: "1px solid #ddd" }}>
+          <th style={{ textAlign: "center", padding: 8, borderBottom: "1px solid #ddd" }}>
             Discord User
           </th>
-          <th style={{ textAlign: "left", padding: 8, borderBottom: "1px solid #ddd" }}>
+          <th style={{ textAlign: "center", padding: 8, borderBottom: "1px solid #ddd" }}>
             URL
           </th>
-          <th style={{ textAlign: "left", padding: 8, borderBottom: "1px solid #ddd" }}>
+          <th style={{ textAlign: "center", padding: 8, borderBottom: "1px solid #ddd" }}>
             GIF
           </th>
           </tr>

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "../styles/Homepage.css";
-import TopGifs from "../components/TopGifs.jsx";
+import TopGifs from "../components/topGifs.jsx";
 
 const Homepage = () => {
 
@@ -9,7 +9,7 @@ const Homepage = () => {
       <header className="hero">
         <div>
           <h1 id="homepage-title" className="title">
-            Welcome to Work in Progress.
+            Welcome to Tenor Before its Gone.
           </h1>
           <TopGifs />
         </div>
