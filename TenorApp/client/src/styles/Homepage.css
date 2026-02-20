@@ -10,13 +10,12 @@
 .hero {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   gap: 28px;
   padding: 28px;
   background: linear-gradient(180deg, #1e293b, #0f172a);
   border-radius: 12px;
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
-  justify-content: center;
   margin-bottom: 32px;
 }
 
@@ -25,28 +24,6 @@
   font-size: 28px;
   line-height: 1.05;
   text-align: center;
-}
-
-.lead {
-  margin-top: 8px;
-  margin-bottom: 16px;
-  color: #94a3b8;
-}
-
-.cta-row {
-  display: flex;
-  gap: 12px;
-  align-items: center;
-}
-
-.primary {
-  background: #0ea5a4;
-  color: white;
-  border: none;
-  padding: 10px 16px;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: 600;
 }
 
 .stats-grid {
