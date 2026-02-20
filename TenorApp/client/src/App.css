@@ -3,6 +3,9 @@
   margin: 0 auto;
   padding: 2rem;
   text-align: center;
+  background-color: #0f172a;
+  min-height: 100vh;
+  color: #f1f5f9;
 }
 
 .logo {

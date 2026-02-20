@@ -45,16 +45,16 @@ export default function UserLeaderboard() {
 
 const styles = {
   card: {
-    background: "white",
+    background: "#1e293b",
     borderRadius: "12px",
     padding: "24px",
-    boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
+    boxShadow: "0 2px 8px rgba(0,0,0,0.4)",
     marginBottom: "24px",
   },
   title: {
     margin: "0 0 16px 0",
     fontSize: "20px",
-    color: "#0f172a",
+    color: "#f1f5f9",
   },
   leaderboard: {
     display: "flex",
@@ -67,7 +67,7 @@ const styles = {
     gap: "12px",
     padding: "8px 12px",
     borderRadius: "8px",
-    background: "#f8fafc",
+    background: "#334155",
   },
   rank: {
     fontSize: "18px",
@@ -77,6 +77,7 @@ const styles = {
   username: {
     flex: 1,
     fontSize: "16px",
+    color: "#f1f5f9",
   },
   count: {
     fontSize: "14px",

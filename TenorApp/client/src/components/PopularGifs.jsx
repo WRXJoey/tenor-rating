@@ -62,16 +62,16 @@ export default function PopularGifs() {
 
 const styles = {
   card: {
-    background: "white",
+    background: "#1e293b",
     borderRadius: "12px",
     padding: "24px",
-    boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
+    boxShadow: "0 2px 8px rgba(0,0,0,0.4)",
     marginBottom: "24px",
   },
   title: {
     margin: "0 0 16px 0",
     fontSize: "20px",
-    color: "#0f172a",
+    color: "#f1f5f9",
   },
   grid: {
     display: "grid",
@@ -82,7 +82,7 @@ const styles = {
     borderRadius: "8px",
     overflow: "hidden",
     border: "2px solid #0ea5a4",
-    background: "#f8fafc",
+    background: "#334155",
   },
   media: {
     width: "100%",
@@ -103,6 +103,6 @@ const styles = {
   },
   posters: {
     fontSize: "12px",
-    color: "#64748b",
+    color: "#94a3b8",
   },
 };

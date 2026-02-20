@@ -27,22 +27,22 @@ export default function TopGifs() {
   if (rows.length === 0) return <p>No GIFs Found :( </p>;
 
   return (
-    <div style={{ maxWidth: 900, margin: "0 auto", padding: 24 }}>
-      <h2>Recent GIFs</h2>
+    <div style={{ maxWidth: 900, margin: "0 auto", padding: 24, background: "#1e293b", borderRadius: 12, boxShadow: "0 2px 8px rgba(0,0,0,0.4)" }}>
+      <h2 style={{ color: "#f1f5f9", marginTop: 0 }}>Recent GIFs</h2>
 
       <table style={{ width: "100%", borderCollapse: "collapse" }}>
         <thead>
           <tr>
-          <th style={{ textAlign: "center", padding: 8, borderBottom: "1px solid #ddd" }}>
+          <th style={{ textAlign: "center", padding: 8, borderBottom: "1px solid #334155", color: "#f1f5f9" }}>
             Discord User
           </th>
-          <th style={{ textAlign: "center", padding: 8, borderBottom: "1px solid #ddd" }}>
+          <th style={{ textAlign: "center", padding: 8, borderBottom: "1px solid #334155", color: "#f1f5f9" }}>
             Posted
           </th>
-          <th style={{ textAlign: "center", padding: 8, borderBottom: "1px solid #ddd" }}>
+          <th style={{ textAlign: "center", padding: 8, borderBottom: "1px solid #334155", color: "#f1f5f9" }}>
             URL
           </th>
-          <th style={{ textAlign: "center", padding: 8, borderBottom: "1px solid #ddd" }}>
+          <th style={{ textAlign: "center", padding: 8, borderBottom: "1px solid #334155", color: "#f1f5f9" }}>
             GIF
           </th>
           </tr>
@@ -50,21 +50,21 @@ export default function TopGifs() {
         <tbody>
           {rows.map((r) => (
               <tr key={r.id}>
-                <td style={{ padding: 8, borderBottom: "1px solid #eee" }}>
+                <td style={{ padding: 8, borderBottom: "1px solid #1e293b", color: "#f1f5f9" }}>
                   {r.discord_username}
                 </td>
 
-                <td style={{ padding: 8, borderBottom: "1px solid #eee", fontSize: "14px", color: "#64748b" }}>
+                <td style={{ padding: 8, borderBottom: "1px solid #1e293b", fontSize: "14px", color: "#94a3b8" }}>
                   {getRelativeTime(r.posted_at)}
                 </td>
 
-                <td style={{ padding: 8, borderBottom: "1px solid #eee" }}>
+                <td style={{ padding: 8, borderBottom: "1px solid #1e293b" }}>
                   <a href={r.tenor_url} target="_blank" rel="noreferrer">
                     open
                   </a>
                 </td>
 
-              <td style={{ padding: 8, borderBottom: "1px solid #eee" }}>
+              <td style={{ padding: 8, borderBottom: "1px solid #1e293b" }}>
                 {isVideo(r.tenor_url) ? (
                   <video
                     src={r.tenor_url}
