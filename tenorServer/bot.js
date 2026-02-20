@@ -34,6 +34,22 @@ client.once("ready", () => {
 client.on("messageCreate", async (message) => {
   if (message.author.bot) return;
 
+  // Debug: Log all messages
+  console.log(`[MSG] ${message.author.username}: ${message.content || '(no content)'}`);
+
+  // Debug: Check if message has embeds
+  if (message.embeds.length > 0) {
+    console.log(`[EMBEDS] Found ${message.embeds.length} embed(s)`);
+    message.embeds.forEach((embed, idx) => {
+      console.log(`  Embed ${idx}:`, {
+        provider: embed.provider?.name,
+        url: embed.url,
+        hasVideo: !!embed.video,
+        hasThumbnail: !!embed.thumbnail
+      });
+    });
+  }
+
   if(message.content.trim() === '!j ping') {
     message.channel.send('Pong!');
     return;
@@ -55,13 +71,22 @@ client.on("messageCreate", async (message) => {
   }
 
   const tenor = extractTenorFromEmbeds(message);
+  console.log('[TENOR]', tenor ? 'Detected Tenor GIF' : 'No Tenor GIF found');
+
   if (!tenor || !tenor.tenorUrl) return;
 
+  console.log('[INSERT] Attempting to save:', {
+    username: message.author.username,
+    gifId: tenor.tenorGifId,
+    url: tenor.tenorUrl.substring(0, 50) + '...'
+  });
+
   try {
-    await pool.query(
+    const result = await pool.query(
       `INSERT INTO tenor_logs
        (discord_username, tenor_url, tenor_gif_id)
-       VALUES ($1, $2, $3)`,
+       VALUES ($1, $2, $3)
+       RETURNING id`,
       [
         message.author.username,
         tenor.tenorUrl,  //returns media url
@@ -70,9 +95,10 @@ client.on("messageCreate", async (message) => {
     );
 
     await message.react("🎬");
-    console.log("Saved:", message.author.username, tenor.tenorGifId);
+    console.log("✓ Saved with ID:", result.rows[0].id, message.author.username, tenor.tenorGifId);
   } catch (err) {
-    console.error("DB insert failed:", err);
+    console.error("❌ DB insert failed:", err.message);
+    console.error("Full error:", err);
   }
 });
 client.login(process.env.DISCORD_TOKEN);

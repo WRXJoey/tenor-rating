@@ -1,4 +1,5 @@
 import React from "react";
+import { getRelativeTime } from "../utils/timeUtils.js";
 
 
 export default function TopGifs() {
@@ -7,7 +8,7 @@ export default function TopGifs() {
   const [error, setError] = React.useState("");
 
   React.useEffect(() => {
-    fetch("/api/top-gifs")
+    fetch("/api/top-gifs?limit=50")
       .then(async (res) => {
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         return res.json();
@@ -21,7 +22,7 @@ export default function TopGifs() {
     return /\.(mp4|webm)(\?|#|$)/i.test(url);
   }
 
-  if (loading) return <p>Loading top GIFs...</p>;
+  if (loading) return <p>Loading GIFs...</p>;
   if (error) return <p>Error: {error}</p>;
   if (rows.length === 0) return <p>No GIFs Found :( </p>;
 
@@ -36,6 +37,9 @@ export default function TopGifs() {
             Discord User
           </th>
           <th style={{ textAlign: "center", padding: 8, borderBottom: "1px solid #ddd" }}>
+            Posted
+          </th>
+          <th style={{ textAlign: "center", padding: 8, borderBottom: "1px solid #ddd" }}>
             URL
           </th>
           <th style={{ textAlign: "center", padding: 8, borderBottom: "1px solid #ddd" }}>
@@ -45,9 +49,13 @@ export default function TopGifs() {
         </thead>
         <tbody>
           {rows.map((r) => (
-              <tr key={`${r.tenor_gif_id}-${r.discord_username}-${r.tenor_url}`}>
+              <tr key={r.id}>
                 <td style={{ padding: 8, borderBottom: "1px solid #eee" }}>
                   {r.discord_username}
+                </td>
+
+                <td style={{ padding: 8, borderBottom: "1px solid #eee", fontSize: "14px", color: "#64748b" }}>
+                  {getRelativeTime(r.posted_at)}
                 </td>
 
                 <td style={{ padding: 8, borderBottom: "1px solid #eee" }}>

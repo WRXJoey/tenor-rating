@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import "../styles/Homepage.css";
 import TopGifs from "../components/topGifs.jsx";
+import UserLeaderboard from "../components/UserLeaderboard.jsx";
+import PopularGifs from "../components/PopularGifs.jsx";
 
 const Homepage = () => {
 
@@ -11,9 +13,15 @@ const Homepage = () => {
           <h1 id="homepage-title" className="title">
             Welcome to Tenor Before its Gone.
           </h1>
-          <TopGifs />
         </div>
       </header>
+
+      <div className="stats-grid">
+        <UserLeaderboard />
+        <PopularGifs />
+      </div>
+
+      <TopGifs />
     </main>
   );
 };
