@@ -16,10 +16,10 @@ export default function UserLeaderboard() {
       .finally(() => setLoading(false));
   }, []);
 
-  const getMedalEmoji = (index) => {
-    if (index === 0) return "🥇";
-    if (index === 1) return "🥈";
-    if (index === 2) return "🥉";
+  const getRank = (index) => {
+    if (index === 0) return "1.";
+    if (index === 1) return "2.";
+    if (index === 2) return "3.";
     return `${index + 1}.`;
   };
 
@@ -33,7 +33,7 @@ export default function UserLeaderboard() {
       <div style={styles.leaderboard}>
         {users.map((user, idx) => (
           <div key={user.discord_username} style={styles.leaderboardItem}>
-            <span style={styles.rank}>{getMedalEmoji(idx)}</span>
+            <span style={styles.rank}>{getRank(idx)}</span>
             <span style={styles.username}>{user.discord_username}</span>
             <span style={styles.count}>{user.gif_count} GIF{user.gif_count !== 1 ? 's' : ''}</span>
           </div>
@@ -53,8 +53,9 @@ const styles = {
   },
   title: {
     margin: "0 0 16px 0",
-    fontSize: "20px",
+    fontSize: "25px",
     color: "#f1f5f9",
+    textAlign: "center",
   },
   leaderboard: {
     display: "flex",
@@ -68,6 +69,7 @@ const styles = {
     padding: "8px 12px",
     borderRadius: "8px",
     background: "#334155",
+    
   },
   rank: {
     fontSize: "18px",

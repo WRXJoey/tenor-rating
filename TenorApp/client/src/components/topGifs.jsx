@@ -28,7 +28,7 @@ export default function TopGifs() {
 
   return (
     <div style={{ maxWidth: 900, margin: "0 auto", padding: 24, background: "#1e293b", borderRadius: 12, boxShadow: "0 2px 8px rgba(0,0,0,0.4)" }}>
-      <h2 style={{ color: "#f1f5f9", marginTop: 0 }}>Recent GIFs</h2>
+      <h2 style={{ color: "#f1f5f9", marginTop: 0, textAlign: "center", marginBottom: 40 }}>GIF Log</h2>
 
       <table style={{ width: "100%", borderCollapse: "collapse" }}>
         <thead>

@@ -70,8 +70,9 @@ const styles = {
   },
   title: {
     margin: "0 0 16px 0",
-    fontSize: "20px",
+    fontSize: "25px",
     color: "#f1f5f9",
+    textAlign: "center",
   },
   grid: {
     display: "grid",

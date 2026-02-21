@@ -95,9 +95,9 @@ client.on("messageCreate", async (message) => {
     );
 
     await message.react("🎬");
-    console.log("✓ Saved with ID:", result.rows[0].id, message.author.username, tenor.tenorGifId);
+    console.log("Saved with ID:", result.rows[0].id, message.author.username, tenor.tenorGifId);
   } catch (err) {
-    console.error("❌ DB insert failed:", err.message);
+    console.error("Database insert failed:", err.message);
     console.error("Full error:", err);
   }
 });
