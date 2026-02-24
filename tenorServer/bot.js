@@ -69,10 +69,6 @@ client.on("messageCreate", async (message) => {
     message.channel.send('Commands:\n!j ping - Check bot responsiveness\n!j stats - Get total logged Tenor GIFs\n!j help - Show this help message');
     return;
   }
-  if(message.content.trim().startsWith('!j')) {
-    message.channel.send('Unknown command. Type !j help for a list of commands.');
-    return;
-  }
   if(message.content.trim() === '!j recent') {
     try {
       const res = await pool.query('SELECT discord_username, tenor_gif_id FROM tenor_logs ORDER BY id DESC LIMIT 5');
@@ -86,6 +82,11 @@ client.on("messageCreate", async (message) => {
       console.error("DB query failed:", err);
       message.channel.send('Error retrieving recent GIFs.');
     }
+    return;
+  }
+
+    if(message.content.trim().startsWith('!j')) {
+    message.channel.send('Unknown command. Type !j help for a list of commands.');
     return;
   }
 
@@ -113,7 +114,7 @@ client.on("messageCreate", async (message) => {
       ]
     );
 
-    await message.react("🎬");
+    await message.react("🎬"); //real emoji use in code!?!?!?!
     console.log("Saved with ID:", result.rows[0].id, message.author.username, tenor.tenorGifId);
   } catch (err) {
     console.error("Database insert failed:", err.message);
