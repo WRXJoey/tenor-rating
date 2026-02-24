@@ -69,6 +69,25 @@ client.on("messageCreate", async (message) => {
     message.channel.send('Commands:\n!j ping - Check bot responsiveness\n!j stats - Get total logged Tenor GIFs\n!j help - Show this help message');
     return;
   }
+  if(message.content.trim().startsWith('!j')) {
+    message.channel.send('Unknown command. Type !j help for a list of commands.');
+    return;
+  }
+  if(message.content.trim() === '!j recent') {
+    try {
+      const res = await pool.query('SELECT discord_username, tenor_gif_id FROM tenor_logs ORDER BY id DESC LIMIT 5');
+      if (res.rows.length === 0) {
+        message.channel.send('No Tenor GIFs logged yet.');
+        return;
+      }
+      const recentGifs = res.rows.map(row => `${row.discord_username}: https://tenor.com/view/${row.tenor_gif_id}`).join('\n');
+      message.channel.send(`Recent Tenor GIFs:\n${recentGifs}`);
+    } catch (err) {
+      console.error("DB query failed:", err);
+      message.channel.send('Error retrieving recent GIFs.');
+    }
+    return;
+  }
 
   const tenor = extractTenorFromEmbeds(message);
   console.log('[TENOR]', tenor ? 'Detected Tenor GIF' : 'No Tenor GIF found');
