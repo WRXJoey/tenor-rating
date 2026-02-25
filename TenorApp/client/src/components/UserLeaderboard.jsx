@@ -16,7 +16,7 @@ export default function UserLeaderboard() {
       .finally(() => setLoading(false));
   }, []);
 
-  const getRank = (index) => {
+  const getRank = (index) => { //EWWWWW
     if (index === 0) return "1.";
     if (index === 1) return "2.";
     if (index === 2) return "3.";

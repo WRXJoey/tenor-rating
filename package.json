@@ -23,5 +23,9 @@
   "homepage": "https://github.com/WRXJoey/tenor-rating#readme",
   "devDependencies": {
     "concurrently": "^9.2.1"
+  },
+  "dependencies": {
+    "chart.js": "^4.5.1",
+    "react-chartjs-2": "^5.3.1"
   }
 }

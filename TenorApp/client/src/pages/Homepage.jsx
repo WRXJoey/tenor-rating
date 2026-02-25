@@ -3,6 +3,7 @@ import "../styles/Homepage.css";
 import TopGifs from "../components/topGifs.jsx";
 import UserLeaderboard from "../components/UserLeaderboard.jsx";
 import PopularGifs from "../components/PopularGifs.jsx";
+import Graph from "../components/graph.jsx";
 
 const Homepage = () => {
 
@@ -18,6 +19,7 @@ const Homepage = () => {
 
       <div className="stats-grid">
         <UserLeaderboard />
+        <Graph />
         <PopularGifs />
       </div>
 
