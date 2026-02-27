@@ -8,73 +8,81 @@ export default function Graph() {
   const chartRef = useRef(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [chartData, setChartData] = useState(null);
 
+  // Fetch data
   useEffect(() => {
-    fetch("/api/popular-gifs?limit=10")
+    fetch("/api/leaderboard?limit=10")
       .then((res) => {
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         return res.json();
       })
-      .then((gifs) => {
-        const labels = gifs.map((g) => `${g.tenor_gif_id}`);
-        const counts = gifs.map((g) => g.post_count);
-
-        if (chartRef.current) {
-          chartRef.current.destroy();
-        }
-
-        const ctx = canvasRef.current.getContext("2d");
-        chartRef.current = new Chart(ctx, {
-          type: "doughnut",
-          data: {
-            labels,
-            datasets: [
-              {
-                label: "Post Count",
-                data: counts,
-                backgroundColor: [
-                  "#FF6384",
-                  "#36A2EB",
-                  "#FFCE56",
-                  "#4BC0C0",
-                  "#9966FF",
-                  "#FF9F40",
-                  "#FF6384",
-                  "#C9CBCF",
-                  "#4BC0C0",
-                  "#FF6384",
-                ],
-              },
-            ],
-          },
-          options: {
-            responsive: true,
-            maintainAspectRatio: true,
-            plugins: {
-              legend: {
-                position: "bottom",
-                labels: {
-                  font: { size: 11 },
-                  padding: 10,
-                },
-              },
-            },
-          },
-        });
+      .then((users) => {
+        const labels = users.map((u) => u.discord_username);
+        const counts = users.map((u) => u.gif_count);
+        setChartData({ labels, counts });
         setLoading(false);
       })
       .catch((err) => {
-        console.error(err);
-        setError("Failed to load chart data");
+        console.error("Graph error:", err.message);
+        setError(`Failed to load chart data: ${err.message}`);
         setLoading(false);
       });
+  }, []);
+
+  // Create chart after canvas is rendered
+  useEffect(() => {
+    if (!chartData || !canvasRef.current) return;
+
+    if (chartRef.current) {
+      chartRef.current.destroy();
+    }
+
+    const ctx = canvasRef.current.getContext("2d");
+    chartRef.current = new Chart(ctx, {
+      type: "doughnut",
+      data: {
+        labels: chartData.labels,
+        datasets: [
+          {
+            label: "GIFs Posted",
+            data: chartData.counts,
+            backgroundColor: [
+              "#FF6384",
+              "#36A2EB",
+              "#FFCE56",
+              "#4BC0C0",
+              "#9966FF",
+              "#FF9F40",
+              "#FF6384",
+              "#C9CBCF",
+              "#4BC0C0",
+              "#FF6384",
+            ],
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        plugins: {
+          legend: {
+            position: "bottom",
+            labels: {
+              font: { size: 11 },
+              padding: 10,
+            },
+          },
+        },
+      },
+    });
 
     return () => {
       if (chartRef.current) {
         chartRef.current.destroy();
       }
     };
-  }, []);
+  }, [chartData]);
 
   if (loading) return <div>Loading chart...</div>;
   if (error) return <div style={{ color: "#ef4444", fontSize: "14px" }}>{error}</div>;
