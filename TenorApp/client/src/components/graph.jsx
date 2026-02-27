@@ -54,10 +54,10 @@ export default function Graph() {
               "#4BC0C0",
               "#9966FF",
               "#FF9F40",
-              "#FF6384",
+              "#FF6B9D",
               "#C9CBCF",
-              "#4BC0C0",
-              "#FF6384",
+              "#00D9FF",
+              "#FFB347",
             ],
           },
         ],
@@ -67,10 +67,12 @@ export default function Graph() {
         maintainAspectRatio: true,
         plugins: {
           legend: {
-            position: "bottom",
+            position: "right",
             labels: {
               font: { size: 11 },
-              padding: 10,
+              padding: 12,
+              color: "#e2e8f0",
+              usePointStyle: true,
             },
           },
         },
@@ -88,8 +90,31 @@ export default function Graph() {
   if (error) return <div style={{ color: "#ef4444", fontSize: "14px" }}>{error}</div>;
 
   return (
-    <div style={{ maxWidth: "300px", margin: "0 auto" }}>
-      <canvas ref={canvasRef}></canvas>
+    <div style={styles.card}>
+      <h2 style={styles.title}>Top Posters</h2>
+      <div style={styles.chartContainer}>
+        <canvas ref={canvasRef}></canvas>
+      </div>
     </div>
   );
 }
+
+const styles = {
+  card: {
+    background: "#1e293b",
+    borderRadius: "12px",
+    padding: "24px",
+    boxShadow: "0 2px 8px rgba(0,0,0,0.4)",
+    marginBottom: "24px",
+  },
+  title: {
+    margin: "0 0 16px 0",
+    fontSize: "25px",
+    color: "#f1f5f9",
+    textAlign: "center",
+  },
+  chartContainer: {
+    maxWidth: "300px",
+    margin: "0 auto",
+  },
+};
