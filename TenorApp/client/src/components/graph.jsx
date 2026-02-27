@@ -7,10 +7,14 @@ export default function Graph() {
   const canvasRef = useRef(null);
   const chartRef = useRef(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     fetch("/api/popular-gifs?limit=10")
-      .then((res) => res.json())
+      .then((res) => {
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        return res.json();
+      })
       .then((gifs) => {
         const labels = gifs.map((g) => `${g.tenor_gif_id}`);
         const counts = gifs.map((g) => g.post_count);
@@ -61,6 +65,7 @@ export default function Graph() {
       })
       .catch((err) => {
         console.error(err);
+        setError("Failed to load chart data");
         setLoading(false);
       });
 
@@ -72,6 +77,7 @@ export default function Graph() {
   }, []);
 
   if (loading) return <div>Loading chart...</div>;
+  if (error) return <div style={{ color: "#ef4444", fontSize: "14px" }}>{error}</div>;
 
   return (
     <div style={{ maxWidth: "300px", margin: "0 auto" }}>

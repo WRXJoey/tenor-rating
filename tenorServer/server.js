@@ -25,8 +25,8 @@ app.listen(PORT, () => {
 //top gifs
 app.get("/api/top-gifs", async (req, res) => {
   try {
-    const limit = parseInt(req.query.limit) || 50;
-    const offset = parseInt(req.query.offset) || 0;
+    const limit = Math.min(Math.max(parseInt(req.query.limit) || 50, 1), 1000);
+    const offset = Math.max(parseInt(req.query.offset) || 0, 0);
 
     const { rows } = await pool.query(
       `SELECT id, discord_username, tenor_url, tenor_gif_id, posted_at
@@ -45,7 +45,7 @@ app.get("/api/top-gifs", async (req, res) => {
 // User leaderboard
 app.get("/api/leaderboard", async (req, res) => {
   try {
-    const limit = parseInt(req.query.limit) || 10;
+    const limit = Math.min(Math.max(parseInt(req.query.limit) || 10, 1), 1000);
 
     const { rows } = await pool.query(
       `SELECT
@@ -68,8 +68,8 @@ app.get("/api/leaderboard", async (req, res) => {
 // Popular GIFs
 app.get("/api/popular-gifs", async (req, res) => {
   try {
-    const limit = parseInt(req.query.limit) || 10;
-    const minPosts = parseInt(req.query.min_posts) || 2;
+    const limit = Math.min(Math.max(parseInt(req.query.limit) || 10, 1), 1000);
+    const minPosts = Math.max(parseInt(req.query.min_posts) || 2, 1);
 
     const { rows } = await pool.query(
       `SELECT
