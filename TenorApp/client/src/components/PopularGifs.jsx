@@ -20,6 +20,11 @@ export default function PopularGifs() {
     return /\.(mp4|webm)(\?|#|$)/i.test(url);
   }
 
+  function isTrustedUrl(url) {
+    if (!url?.startsWith('https://')) return false;
+    return url.includes('tenor.com') || url.includes('media.tenor.com');
+  }
+
   if (loading) return <p>Loading popular GIFs...</p>;
   if (error) return <p>Error: {error}</p>;
   if (gifs.length === 0) return null; // Don't show if no popular GIFs
@@ -30,22 +35,26 @@ export default function PopularGifs() {
       <div style={styles.grid}>
         {gifs.map((gif) => (
           <div key={gif.tenor_gif_id} style={styles.gifCard}>
-            {isVideo(gif.tenor_url) ? (
-              <video
-                src={gif.tenor_url}
-                style={styles.media}
-                autoPlay
-                loop
-                muted
-                playsInline
-              />
-            ) : (
-              <img
-                src={gif.tenor_url}
-                alt="popular gif"
-                loading="lazy"
-                style={styles.media}
-              />
+            {isTrustedUrl(gif.tenor_url) && (
+              <>
+                {isVideo(gif.tenor_url) ? (
+                  <video
+                    src={gif.tenor_url}
+                    style={styles.media}
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
+                  />
+                ) : (
+                  <img
+                    src={gif.tenor_url}
+                    alt="popular gif"
+                    loading="lazy"
+                    style={styles.media}
+                  />
+                )}
+              </>
             )}
             <div style={styles.gifInfo}>
               <span style={styles.postCount}>Posted {gif.post_count}x</span>
