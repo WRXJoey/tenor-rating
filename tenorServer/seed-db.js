@@ -39,7 +39,7 @@ function randomTimestamp() {
 
 async function seedDatabase() {
   try {
-    console.log("🌱 Seeding database with test data...\n");
+    console.log("[*] Seeding database with test data...\n");
 
     const entries = [];
 
@@ -89,7 +89,7 @@ async function seedDatabase() {
       );
     }
 
-    console.log(`✓ Inserted ${entries.length} entries\n`);
+    console.log(`[OK] Inserted ${entries.length} entries\n`);
 
     // Show summary
     const userCounts = await pool.query(`
@@ -99,9 +99,9 @@ async function seedDatabase() {
       ORDER BY count DESC
     `);
 
-    console.log("📊 User Leaderboard:");
+    console.log("[*] User Leaderboard:");
     userCounts.rows.forEach((row, idx) => {
-      const medal = idx === 0 ? "🥇" : idx === 1 ? "🥈" : idx === 2 ? "🥉" : "  ";
+      const medal = idx === 0 ? "[1]" : idx === 1 ? "[2]" : idx === 2 ? "[3]" : "   ";
       console.log(`  ${medal} ${row.discord_username}: ${row.count} GIFs`);
     });
 
@@ -114,14 +114,14 @@ async function seedDatabase() {
       LIMIT 5
     `);
 
-    console.log("\n🔥 Popular GIFs:");
+    console.log("\n[*] Popular GIFs:");
     popularGifs.rows.forEach((row) => {
       console.log(`  GIF ${row.tenor_gif_id}: posted ${row.count} times`);
     });
 
-    console.log("\n✅ Database seeded successfully!");
+    console.log("\nDatabase seeded successfully!");
   } catch (err) {
-    console.error("❌ Seeding failed:", err.message);
+    console.error("Seeding failed:", err.message);
   } finally {
     await pool.end();
   }

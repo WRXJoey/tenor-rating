@@ -33,9 +33,9 @@ async function runMigration() {
     await pool.query(`CREATE INDEX idx_tenor_logs_username ON tenor_logs(discord_username);`);
     console.log("✓ Created index on discord_username");
 
-    console.log("\n✅ Migration completed successfully!");
+    console.log("\nMigration completed successfully!");
   } catch (err) {
-    console.error("❌ Migration failed:", err.message);
+    console.error("Migration failed:", err.message);
     process.exit(1);
   } finally {
     await pool.end();

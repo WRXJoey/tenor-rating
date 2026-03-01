@@ -5,19 +5,19 @@ dotenv.config();
 
 async function clearDatabase() {
   try {
-    console.log("⚠️  Clearing all data from tenor_logs table...");
+    console.log("[*] Clearing all data from tenor_logs table...");
 
     const result = await pool.query(`DELETE FROM tenor_logs`);
 
-    console.log(`✓ Deleted ${result.rowCount} rows`);
-    console.log("✓ Database cleared!");
+    console.log(`[OK] Deleted ${result.rowCount} rows`);
+    console.log("[OK] Database cleared!");
 
     // Reset the auto-increment counter
     await pool.query(`ALTER SEQUENCE tenor_logs_id_seq RESTART WITH 1`);
-    console.log("✓ ID sequence reset to 1");
+    console.log("[OK] ID sequence reset to 1");
 
   } catch (err) {
-    console.error("❌ Failed to clear database:", err.message);
+    console.error("Failed to clear database:", err.message);
   } finally {
     await pool.end();
   }

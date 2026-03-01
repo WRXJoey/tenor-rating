@@ -31,11 +31,11 @@ async function testDatabase() {
 
     // Clean up test data
     await pool.query(`DELETE FROM tenor_logs WHERE discord_username = 'test_user'`);
-    console.log("✓ Test data cleaned up");
+    console.log("✓Test data cleaned up");
 
-    console.log("\n✅ Database is working correctly!");
+    console.log("\n Database is working correctly!");
   } catch (err) {
-    console.error("❌ Database test failed:", err.message);
+    console.error("Database test failed:", err.message);
     console.error("Full error:", err);
   } finally {
     await pool.end();

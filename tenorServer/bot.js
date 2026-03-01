@@ -114,7 +114,7 @@ client.on("messageCreate", async (message) => {
       ]
     );
 
-    await message.react("🎬"); //real emoji use in code!?!?!?!
+    await message.react("🎬"); //movie clapper reaction
     console.log("Saved with ID:", result.rows[0].id, message.author.username, tenor.tenorGifId);
   } catch (err) {
     console.error("Database insert failed:", err.message);
