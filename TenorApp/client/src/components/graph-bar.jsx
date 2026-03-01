@@ -1,9 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import Chart from "chart.js/auto";
-//i regret this already
 
-//TODO: make this look nice and not like a 5 year old made it in excel 1.4
-export default function Graph() {
+export default function GraphBar() {
   const canvasRef = useRef(null);
   const chartRef = useRef(null);
   const [loading, setLoading] = useState(true);
@@ -39,7 +37,7 @@ export default function Graph() {
 
     const ctx = canvasRef.current.getContext("2d");
     chartRef.current = new Chart(ctx, {
-      type: "doughnut",
+      type: "bar",
       data: {
         labels: chartData.labels,
         datasets: [
@@ -64,14 +62,27 @@ export default function Graph() {
       options: {
         responsive: true,
         maintainAspectRatio: true,
+        indexAxis: "y",
         plugins: {
           legend: {
-            position: "right",
-            labels: {
-              font: { size: 11 },
-              padding: 12,
+            display: false,
+          },
+        },
+        scales: {
+          x: {
+            grid: {
+              color: "rgba(255, 255, 255, 0.1)",
+            },
+            ticks: {
               color: "#e2e8f0",
-              usePointStyle: true,
+            },
+          },
+          y: {
+            grid: {
+              display: false,
+            },
+            ticks: {
+              color: "#e2e8f0",
             },
           },
         },
@@ -90,7 +101,7 @@ export default function Graph() {
 
   return (
     <div style={styles.card}>
-      <h2 style={styles.title}>Top Posters</h2>
+      <h2 style={styles.title}>Top Posters (Bar)</h2>
       <div style={styles.chartContainer}>
         <canvas ref={canvasRef}></canvas>
       </div>
@@ -113,7 +124,6 @@ const styles = {
     textAlign: "center",
   },
   chartContainer: {
-    maxWidth: "300px",
-    margin: "0 auto",
+    height: "300px",
   },
 };

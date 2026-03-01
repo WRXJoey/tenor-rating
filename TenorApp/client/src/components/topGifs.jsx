@@ -21,7 +21,7 @@ export default function TopGifs() {
   }, [open]);
 
   function isVideo(url) {
-    return /\.(mp4|webm)(\?|#|$)/i.test(url); //yeah whatever i guess
+    return /\.(mp4|webm|webp|mov|m4v)(\?|#|$)/i.test(url); //im not even sure if tenor serves these but whatever, i think webm works
   }
 
   return (
