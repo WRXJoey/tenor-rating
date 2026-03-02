@@ -43,7 +43,7 @@ export default function UserDetail() {
     const months = Math.floor(days / 30);
     if (months < 12) return `${months}mo ago`;
     return `${Math.floor(months / 12)}y ago`;
-  };
+  }; //csc 130 
 
   const calculateAvgPostsPerDay = () => {
     if (!userData) return 0;
@@ -189,7 +189,7 @@ const styles = {
     display: "flex",
     alignItems: "center",
     gap: "20px",
-    marginBottom: "40px",
+    marginBottom: "50px",
   },
   backButton: {
     backgroundColor: "#334155",
