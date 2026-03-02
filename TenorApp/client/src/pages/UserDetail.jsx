@@ -90,7 +90,6 @@ export default function UserDetail() {
   return (
     <main style={styles.page}>
       <div style={styles.container}>
-        {/* Header */}
         <div style={styles.header}>
           <button style={styles.backButton} onClick={() => navigate(-1)}>
             ← Back
@@ -98,7 +97,6 @@ export default function UserDetail() {
           <h1 style={styles.username}>{userData.discord_username}</h1>
         </div>
 
-        {/* Stats Section */}
         <div style={styles.statsGrid}>
           <div style={styles.statCard}>
             <div style={styles.statLabel}>Total GIFs</div>
@@ -118,7 +116,6 @@ export default function UserDetail() {
           </div>
         </div>
 
-        {/* Favorite GIFs Section */}
         {userData.favorite_gifs.length > 0 && (
           <div style={styles.section}>
             <h2 style={styles.sectionTitle}>Favorite GIFs ({userData.favorite_gifs.length})</h2>
@@ -154,7 +151,6 @@ export default function UserDetail() {
           </div>
         )}
 
-        {/* Timeline Section */}
         <div style={styles.section}>
           <h2 style={styles.sectionTitle}>Posting Timeline</h2>
           <div style={styles.timeline}>
@@ -280,7 +276,7 @@ const styles = {
     fontSize: "12px",
     color: "#f1f5f9",
     fontWeight: "500",
-  },
+  }
   gifGrid: {
     display: "grid",
     gridTemplateColumns: "repeat(auto-fill, minmax(150px, 1fr))",
