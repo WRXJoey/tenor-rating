@@ -1,6 +1,8 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function UserLeaderboard() {
+  const navigate = useNavigate();
   const [users, setUsers] = React.useState([]);
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState("");
@@ -23,6 +25,20 @@ export default function UserLeaderboard() {
     return `${index + 1}.`;
   };
 
+  const renderUsername = (user) => {
+    if (user.gif_count > 5) {
+      return (
+        <button
+          style={styles.usernameButton}
+          onClick={() => navigate(`/user/${encodeURIComponent(user.discord_username)}`)}
+        >
+          {user.discord_username}
+        </button>
+      );
+    }
+    return <span style={styles.username}>{user.discord_username}</span>;
+  };
+
   if (loading) return <p>Loading leaderboard...</p>;
   if (error) return <p>Error: {error}</p>;
   if (users.length === 0) return <p>No users found</p>;
@@ -34,7 +50,7 @@ export default function UserLeaderboard() {
         {users.map((user, idx) => (
           <div key={user.discord_username} style={styles.leaderboardItem}>
             <span style={styles.rank}>{getRank(idx)}</span>
-            <span style={styles.username}>{user.discord_username}</span>
+            {renderUsername(user)}
             <span style={styles.count}>{user.gif_count} GIF{user.gif_count !== 1 ? 's' : ''}</span>
           </div>
         ))}
@@ -80,6 +96,18 @@ const styles = {
     flex: 1,
     fontSize: "16px",
     color: "#f1f5f9",
+  },
+  usernameButton: {
+    flex: 1,
+    fontSize: "16px",
+    color: "#0ea5a4",
+    background: "none",
+    border: "none",
+    cursor: "pointer",
+    padding: "0",
+    textAlign: "left",
+    fontWeight: "500",
+    transition: "color 0.2s ease",
   },
   count: {
     fontSize: "14px",

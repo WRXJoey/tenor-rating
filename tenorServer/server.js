@@ -92,3 +92,62 @@ app.get("/api/popular-gifs", async (req, res) => {
     res.status(500).json({ error: "Failed to fetch popular GIFs" });
   }
 });
+
+// User detail page
+app.get("/api/users/:username", async (req, res) => {
+  try {
+    const { username } = req.params;
+    if (!username || username.length === 0) {
+      return res.status(400).json({ error: "Username required" });
+    }
+
+    // Get all posts by user
+    const { rows: allPosts } = await pool.query(
+      `SELECT
+         tenor_gif_id,
+         tenor_url,
+         posted_at
+       FROM tenor_logs
+       WHERE discord_username = $1
+       ORDER BY posted_at DESC`,
+      [username]
+    );
+
+    if (allPosts.length === 0) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    // Get user stats
+    const firstPost = allPosts[allPosts.length - 1].posted_at;
+    const lastPost = allPosts[0].posted_at;
+    const totalGifs = allPosts.length;
+
+    // Get favorite GIFs (posted 2+ times)
+    const { rows: favoriteGifs } = await pool.query(
+      `SELECT
+         tenor_gif_id,
+         tenor_url,
+         COUNT(*) as count,
+         MAX(posted_at) as last_posted
+       FROM tenor_logs
+       WHERE discord_username = $1 AND tenor_gif_id IS NOT NULL
+       GROUP BY tenor_gif_id, tenor_url
+       HAVING COUNT(*) >= 2
+       ORDER BY count DESC, last_posted DESC
+       LIMIT 10`,
+      [username]
+    );
+
+    res.json({
+      discord_username: username,
+      total_gifs: totalGifs,
+      first_post: firstPost,
+      last_post: lastPost,
+      all_posts: allPosts,
+      favorite_gifs: favoriteGifs,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Failed to fetch user data" });
+  }
+});
