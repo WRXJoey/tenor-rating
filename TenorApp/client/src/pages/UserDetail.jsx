@@ -43,7 +43,7 @@ export default function UserDetail() {
     const months = Math.floor(days / 30);
     if (months < 12) return `${months}mo ago`;
     return `${Math.floor(months / 12)}y ago`;
-  }; //csc 130 
+  };
 
   const calculateAvgPostsPerDay = () => {
     if (!userData) return 0;
@@ -116,6 +116,23 @@ export default function UserDetail() {
           </div>
         </div>
 
+        <div style={styles.section}>
+          <h2 style={styles.sectionTitle}>Posting Timeline (Last 10)</h2>
+          <div style={styles.timeline}>
+            {userData.all_posts.slice(-10).map((post, idx) => (
+              <div key={`${post.tenor_gif_id}-${post.posted_at}`} style={styles.timelineItem}>
+                <div style={styles.timelineDot}></div>
+                <div style={styles.timelineContent}>
+                  <div style={styles.timelineDate}>
+                    {formatDate(post.posted_at)} · {getRelativeTime(post.posted_at)}
+                  </div>
+                  <div style={styles.timelineId}>GIF #{post.tenor_gif_id}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
         {userData.favorite_gifs.length > 0 && (
           <div style={styles.section}>
             <h2 style={styles.sectionTitle}>Favorite GIFs ({userData.favorite_gifs.length})</h2>
@@ -150,25 +167,6 @@ export default function UserDetail() {
             </div>
           </div>
         )}
-
-        <div style={styles.section}>
-          <h2 style={styles.sectionTitle}>Posting Timeline</h2>
-          <div style={styles.timeline}>
-            {userData.all_posts
-              .slice(-10)
-              .map((post, idx) => (
-                <div key={idx} style={styles.timelineItem}>
-                  <div style={styles.timelineDot}></div>
-                  <div style={styles.timelineContent}>
-                    <div style={styles.timelineDate}>
-                      {formatDate(post.posted_at)} · {getRelativeTime(post.posted_at)}
-                    </div>
-                    <div style={styles.timelineId}>GIF #{post.tenor_gif_id}</div>
-                  </div>
-                </div>
-              ))}
-          </div>
-        </div>
       </div>
     </main>
   );
@@ -189,7 +187,7 @@ const styles = {
     display: "flex",
     alignItems: "center",
     gap: "20px",
-    marginBottom: "50px",
+    marginBottom: "40px",
   },
   backButton: {
     backgroundColor: "#334155",
@@ -247,9 +245,9 @@ const styles = {
   },
   timelineItem: {
     position: "relative",
-    marginBottom: "12px",
+    marginBottom: "20px",
     display: "flex",
-    gap: "12px",
+    gap: "16px",
   },
   timelineDot: {
     position: "absolute",
@@ -268,15 +266,15 @@ const styles = {
     flex: 1,
   },
   timelineDate: {
-    fontSize: "12px",
+    fontSize: "14px",
     color: "#94a3b8",
-    marginBottom: "2px",
+    marginBottom: "4px",
   },
   timelineId: {
-    fontSize: "12px",
+    fontSize: "14px",
     color: "#f1f5f9",
     fontWeight: "500",
-  }
+  },
   gifGrid: {
     display: "grid",
     gridTemplateColumns: "repeat(auto-fill, minmax(150px, 1fr))",
