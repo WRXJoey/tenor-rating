@@ -95,8 +95,12 @@ client.on("messageCreate", async (message) => {
 
   if (!tenor || !tenor.tenorUrl) return;
 
+  await saveTenorGif(message.author.username, tenor);
+});
+
+async function saveTenorGif(username, tenor) {
   console.log('[INSERT] Attempting to save:', {
-    username: message.author.username,
+    username,
     gifId: tenor.tenorGifId,
     url: tenor.tenorUrl.substring(0, 50) + '...'
   });
@@ -106,19 +110,29 @@ client.on("messageCreate", async (message) => {
       `INSERT INTO tenor_logs
        (discord_username, tenor_url, tenor_gif_id)
        VALUES ($1, $2, $3)
+       ON CONFLICT DO NOTHING
        RETURNING id`,
-      [
-        message.author.username,
-        tenor.tenorUrl,  //returns media url
-        tenor.tenorGifId,
-      ]
+      [username, tenor.tenorUrl, tenor.tenorGifId]
     );
 
-    await message.react("🎬"); //movie clapper reaction
-    console.log("Saved with ID:", result.rows[0].id, message.author.username, tenor.tenorGifId);
+    if (result.rows.length > 0) {
+      //await message.react("🎬"); //movie clapper reaction
+      console.log("Saved with ID:", result.rows[0].id, username, tenor.tenorGifId);
+    }
   } catch (err) {
     console.error("Database insert failed:", err.message);
     console.error("Full error:", err);
   }
+}
+
+client.on("messageUpdate", async (oldMessage, newMessage) => {
+  if (newMessage.author?.bot) return;
+  if (oldMessage.embeds.length > 0) return; // embeds already existed, not a new load
+
+  const tenor = extractTenorFromEmbeds(newMessage);
+  if (!tenor || !tenor.tenorUrl) return;
+
+  console.log('[TENOR] Detected Tenor GIF via messageUpdate');
+  await saveTenorGif(newMessage.author.username, tenor);
 });
 client.login(process.env.DISCORD_TOKEN);
