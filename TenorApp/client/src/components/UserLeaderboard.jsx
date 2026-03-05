@@ -9,7 +9,7 @@ export default function UserLeaderboard() {
 
   React.useEffect(() => {
     fetch("/api/leaderboard?limit=10")
-      .then(async (res) => {
+      .then((res) => {
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         return res.json();
       })
@@ -18,12 +18,7 @@ export default function UserLeaderboard() {
       .finally(() => setLoading(false));
   }, []);
 
-  const getRank = (index) => { //EWWWWW
-    if (index === 0) return "1.";
-    if (index === 1) return "2.";
-    if (index === 2) return "3.";
-    return `${index + 1}.`;
-  };
+  const getRank = (index) => `${index + 1}.`;
 
   const renderUsername = (user) => {
     if (user.gif_count > 5) {

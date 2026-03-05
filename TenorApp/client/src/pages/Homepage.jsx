@@ -1,4 +1,3 @@
-import React, { useEffect, useState } from "react";
 import "../styles/Homepage.css";
 import TopGifs from "../components/topGifs.jsx";
 import UserLeaderboard from "../components/UserLeaderboard.jsx";

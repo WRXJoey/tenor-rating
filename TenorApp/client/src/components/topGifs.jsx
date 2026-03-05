@@ -11,7 +11,7 @@ export default function TopGifs() {
     if (!open || rows.length > 0) return;
     setLoading(true); //only loads when opened for the first time
     fetch("/api/top-gifs?limit=50")
-      .then(async (res) => {
+      .then((res) => {
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         return res.json();
       })

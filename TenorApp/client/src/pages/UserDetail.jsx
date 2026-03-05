@@ -119,7 +119,7 @@ export default function UserDetail() {
         <div style={styles.section}>
           <h2 style={styles.sectionTitle}>Posting Timeline (Last 10)</h2>
           <div style={styles.timeline}>
-            {userData.all_posts.slice(-10).map((post, idx) => (
+            {(userData.all_posts ?? []).slice(-10).map((post) => (
               <div key={`${post.tenor_gif_id}-${post.posted_at}`} style={styles.timelineItem}>
                 <div style={styles.timelineDot}></div>
                 <div style={styles.timelineContent}>
@@ -133,7 +133,7 @@ export default function UserDetail() {
           </div>
         </div>
 
-        {userData.favorite_gifs.length > 0 && (
+        {(userData.favorite_gifs?.length ?? 0) > 0 && (
           <div style={styles.section}>
             <h2 style={styles.sectionTitle}>Favorite GIFs ({userData.favorite_gifs.length})</h2>
             <div style={styles.gifGrid}>
@@ -236,7 +236,6 @@ const styles = {
     fontSize: "20px",
     fontWeight: "bold",
     color: "#f1f5f9",
-    marginBottom: "20px",
     margin: "0 0 20px 0",
   },
   timeline: {

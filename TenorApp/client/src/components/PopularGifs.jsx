@@ -7,7 +7,7 @@ export default function PopularGifs() {
 
   React.useEffect(() => {
     fetch("/api/popular-gifs?limit=5&min_posts=2")
-      .then(async (res) => {
+      .then((res) => {
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         return res.json();
       })
