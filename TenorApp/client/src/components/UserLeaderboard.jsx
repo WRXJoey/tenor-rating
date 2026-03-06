@@ -36,7 +36,12 @@ export default function UserLeaderboard() {
 
   if (loading) return <p>Loading leaderboard...</p>;
   if (error) return <p>Error: {error}</p>;
-  if (users.length === 0) return <p>No users found</p>;
+  if (users.length === 0) return (
+    <div style={styles.card}>
+      <h2 style={styles.title}>Top GIF Posters</h2>
+      <div style={styles.empty}>No data yet</div>
+    </div>
+  );
 
   return (
     <div style={styles.card}>
@@ -108,5 +113,11 @@ const styles = {
     fontSize: "14px",
     color: "#0ea5a4",
     fontWeight: "600",
+  },
+  empty: {
+    textAlign: "center",
+    color: "#94a3b8",
+    fontSize: "14px",
+    padding: "24px 0",
   },
 };

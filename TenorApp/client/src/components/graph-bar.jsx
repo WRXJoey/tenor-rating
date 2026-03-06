@@ -98,6 +98,12 @@ export default function GraphBar() {
 
   if (loading) return <div>Loading chart...</div>;
   if (error) return <div style={{ color: "#ef4444", fontSize: "14px" }}>{error}</div>;
+  if (!chartData || chartData.labels.length === 0) return (
+    <div style={styles.card}>
+      <h2 style={styles.title}>Top Posters (Bar)</h2>
+      <div style={styles.empty}>No data yet</div>
+    </div>
+  );
 
   return (
     <div style={styles.card}>
@@ -125,5 +131,11 @@ const styles = {
   },
   chartContainer: {
     height: "300px",
+  },
+  empty: {
+    textAlign: "center",
+    color: "#94a3b8",
+    fontSize: "14px",
+    padding: "24px 0",
   },
 };
