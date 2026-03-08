@@ -7,11 +7,13 @@ export function getRelativeTime(timestamp) {
   const diffHours = Math.floor(diffMins / 60);
   const diffDays = Math.floor(diffHours / 24);
 
-  if (diffSecs < 60) return `${diffSecs} second${diffSecs !== 1 ? 's' : ''} ago`;
-  if (diffMins < 60) return `${diffMins} minute${diffMins !== 1 ? 's' : ''} ago`;
-  if (diffHours < 24) return `${diffHours} hour${diffHours !== 1 ? 's' : ''} ago`;
-  if (diffDays < 7) return `${diffDays} day${diffDays !== 1 ? 's' : ''} ago`;
-  if (diffDays < 30) return `${Math.floor(diffDays / 7)} week${Math.floor(diffDays / 7) !== 1 ? 's' : ''} ago`;
+  const plural = (count, word) => `${count} ${word}${count !== 1 ? 's' : ''} ago`;
+
+  if (diffSecs  < 60) return plural(diffSecs,                  'second');
+  if (diffMins  < 60) return plural(diffMins,                  'minute');
+  if (diffHours < 24) return plural(diffHours,                 'hour');
+  if (diffDays  <  7) return plural(diffDays,                  'day');
+  if (diffDays  < 30) return plural(Math.floor(diffDays / 7),  'week');
 
   return posted.toLocaleDateString();
 }
