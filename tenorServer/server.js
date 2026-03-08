@@ -1,4 +1,3 @@
-// server.js
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
@@ -6,6 +5,7 @@ import { pool } from "./db.js";
 
 dotenv.config();
 const app = express();
+app.disable("x-powered-by");
 const PORT = process.env.PORT || 3000;
 
 // Middleware
@@ -98,10 +98,9 @@ app.get("/api/users/:username", async (req, res) => {
   try {
     const { username } = req.params;
     if (!username || username.length === 0) {
-      return res.status(400).json({ error: "Username required" });
+      return res.status(400).json({ error: "Username requires characters" });
     }
 
-    // Get all posts by user
     const { rows: allPosts } = await pool.query(
       `SELECT
          tenor_gif_id,
@@ -122,7 +121,6 @@ app.get("/api/users/:username", async (req, res) => {
     const lastPost = allPosts[0].posted_at;
     const totalGifs = allPosts.length;
 
-    // Get favorite GIFs (posted 2+ times)
     const { rows: favoriteGifs } = await pool.query(
       `SELECT
          tenor_gif_id,
