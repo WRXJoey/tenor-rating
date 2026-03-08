@@ -20,7 +20,9 @@ const Homepage = () => {
       <div className="stats-grid">
         <UserLeaderboard />
         <Graph />
-        <GraphBar />
+        <div className="bar-centered">
+          <GraphBar />
+        </div>
         <PopularGifs />
       </div>
 

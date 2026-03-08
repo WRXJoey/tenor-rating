@@ -33,8 +33,19 @@
   margin-bottom: 32px;
 }
 
+.bar-centered {
+  grid-column: 1 / -1;
+  max-width: 600px;
+  width: 100%;
+  margin: 0 auto;
+}
+
 @media (max-width: 768px) {
   .stats-grid {
     grid-template-columns: 1fr;
+  }
+
+  .bar-centered {
+    grid-column: 1;
   }
 }
