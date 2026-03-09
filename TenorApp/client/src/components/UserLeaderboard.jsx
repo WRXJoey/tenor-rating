@@ -20,19 +20,14 @@ export default function UserLeaderboard() {
 
   const getRank = (index) => `${index + 1}.`;
 
-  const renderUsername = (user) => {
-    if (user.gif_count > 5) {
-      return (
-        <button
-          style={styles.usernameButton}
-          onClick={() => navigate(`/user/${encodeURIComponent(user.discord_username)}`)}
-        >
-          {user.discord_username}
-        </button>
-      );
-    }
-    return <span style={styles.username}>{user.discord_username}</span>;
-  };
+  const renderUsername = (user) => (
+    <button
+      style={styles.usernameButton}
+      onClick={() => navigate(`/user/${encodeURIComponent(user.discord_username)}`)}
+    >
+      {user.discord_username}
+    </button>
+  );
 
   if (loading) return <p>Loading leaderboard...</p>;
   if (error) return <p>Error: {error}</p>;

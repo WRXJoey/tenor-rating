@@ -27,7 +27,12 @@ export default function PopularGifs() {
 
   if (loading) return <p>Loading popular GIFs...</p>;
   if (error) return <p>Error: {error}</p>;
-  if (gifs.length === 0) return null; // Don't show if no popular GIFs
+  if (gifs.length === 0) return (
+    <div style={styles.card}>
+      <h2 style={styles.title}>Most Popular GIFs</h2>
+      <div style={styles.empty}>No data yet</div>
+    </div>
+  );
 
   return (
     <div style={styles.card}>
@@ -114,5 +119,11 @@ const styles = {
   posters: {
     fontSize: "12px",
     color: "#94a3b8",
+  },
+  empty: {
+    textAlign: "center",
+    color: "#94a3b8",
+    fontSize: "14px",
+    padding: "24px 0",
   },
 };

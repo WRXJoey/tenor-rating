@@ -1,24 +1,46 @@
 import React from "react";
 import { getRelativeTime } from "../utils/timeUtils.js";
 
+const PAGE_SIZE = 50;
+
 export default function TopGifs() {
   const [open, setOpen] = React.useState(false);
   const [rows, setRows] = React.useState([]);
   const [loading, setLoading] = React.useState(false);
+  const [loadingMore, setLoadingMore] = React.useState(false);
   const [error, setError] = React.useState("");
+  const [hasMore, setHasMore] = React.useState(true);
 
   React.useEffect(() => {
     if (!open || rows.length > 0) return;
-    setLoading(true); //only loads when opened for the first time
-    fetch("/api/top-gifs?limit=50")
+    setLoading(true);
+    fetch(`/api/top-gifs?limit=${PAGE_SIZE}&offset=0`)
       .then((res) => {
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         return res.json();
       })
-      .then((data) => setRows(data))
+      .then((data) => {
+        setRows(data);
+        setHasMore(data.length === PAGE_SIZE);
+      })
       .catch((e) => setError(e.message))
       .finally(() => setLoading(false));
   }, [open]);
+
+  const loadMore = () => {
+    setLoadingMore(true);
+    fetch(`/api/top-gifs?limit=${PAGE_SIZE}&offset=${rows.length}`)
+      .then((res) => {
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        return res.json();
+      })
+      .then((data) => {
+        setRows((prev) => [...prev, ...data]);
+        setHasMore(data.length === PAGE_SIZE);
+      })
+      .catch((e) => setError(e.message))
+      .finally(() => setLoadingMore(false));
+  };
 
   function isVideo(url) {
     return /\.(mp4|webm|webp|mov|m4v)(\?|#|$)/i.test(url); //im not even sure if tenor serves these but whatever, i think webm works
@@ -53,53 +75,66 @@ export default function TopGifs() {
           {error && <p style={{ color: "#f87171" }}>Error: {error}</p>}
           {!loading && !error && rows.length === 0 && <p style={{ color: "#94a3b8" }}>No GIFs Found :(</p>}
           {rows.length > 0 && (
-            <table style={{ width: "100%", borderCollapse: "collapse", marginTop: 16 }}>
-              <thead>
-                <tr>
-                  {["Discord User", "Posted", "URL", "GIF"].map((col) => (
-                    <th key={col} style={{ textAlign: "center", padding: 8, borderBottom: "1px solid #334155", color: "#f1f5f9" }}>
-                      {col}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {rows.map((r) => (
-                  <tr key={r.id}>
-                    <td style={{ padding: 8, borderBottom: "1px solid #334155", color: "#f1f5f9" }}>
-                      {r.discord_username}
-                    </td>
-                    <td style={{ padding: 8, borderBottom: "1px solid #334155", fontSize: "14px", color: "#94a3b8" }}>
-                      {getRelativeTime(r.posted_at)}
-                    </td>
-                    <td style={{ padding: 8, borderBottom: "1px solid #334155" }}>
-                      <a href={r.tenor_url} target="_blank" rel="noreferrer">
-                        open
-                        </a>
-                    </td>
-                    <td style={{ padding: 8, borderBottom: "1px solid #334155" }}>
-                      {isVideo(r.tenor_url) ? (
-                        <video
-                          src={r.tenor_url}
-                          style={{ maxWidth: 200, maxHeight: 200, borderRadius: 8 }}
-                          autoPlay 
-                          loop 
-                          muted 
-                          playsInline
-                        />
-                      ) : (
-                        <img
-                          src={r.tenor_url}
-                          alt="gif"
-                          loading="lazy"
-                          style={{ maxWidth: 200, maxHeight: 200, borderRadius: 8 }}
-                        />
-                      )}
-                    </td>
+            <>
+              <table style={{ width: "100%", borderCollapse: "collapse", marginTop: 16 }}>
+                <thead>
+                  <tr>
+                    {["Discord User", "Posted", "URL", "GIF"].map((col) => (
+                      <th key={col} style={{ textAlign: "center", padding: 8, borderBottom: "1px solid #334155", color: "#f1f5f9" }}>
+                        {col}
+                      </th>
+                    ))}
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {rows.map((r) => (
+                    <tr key={r.id}>
+                      <td style={{ padding: 8, borderBottom: "1px solid #334155", color: "#f1f5f9" }}>
+                        {r.discord_username}
+                      </td>
+                      <td style={{ padding: 8, borderBottom: "1px solid #334155", fontSize: "14px", color: "#94a3b8" }}>
+                        {getRelativeTime(r.posted_at)}
+                      </td>
+                      <td style={{ padding: 8, borderBottom: "1px solid #334155" }}>
+                        <a href={r.tenor_url} target="_blank" rel="noreferrer">
+                          open
+                        </a>
+                      </td>
+                      <td style={{ padding: 8, borderBottom: "1px solid #334155" }}>
+                        {isVideo(r.tenor_url) ? (
+                          <video
+                            src={r.tenor_url}
+                            style={{ maxWidth: 200, maxHeight: 200, borderRadius: 8 }}
+                            autoPlay
+                            loop
+                            muted
+                            playsInline
+                          />
+                        ) : (
+                          <img
+                            src={r.tenor_url}
+                            alt="gif"
+                            loading="lazy"
+                            style={{ maxWidth: 200, maxHeight: 200, borderRadius: 8 }}
+                          />
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              {hasMore && (
+                <div style={{ textAlign: "center", marginTop: 16 }}>
+                  <button
+                    onClick={loadMore}
+                    disabled={loadingMore}
+                    style={{ background: "#334155", color: "#f1f5f9", border: "none", padding: "8px 24px", borderRadius: 6, cursor: loadingMore ? "default" : "pointer", fontSize: 14 }}
+                  >
+                    {loadingMore ? "Loading..." : "Load more"}
+                  </button>
+                </div>
+              )}
+            </>
           )}
         </div>
       )}
