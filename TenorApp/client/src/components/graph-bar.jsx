@@ -1,33 +1,14 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import Chart from "chart.js/auto";
 
-export default function GraphBar() {
+export default function GraphBar({ users, loading, error }) {
   const canvasRef = useRef(null);
   const chartRef = useRef(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-  const [chartData, setChartData] = useState(null);
 
-  useEffect(() => {
-    fetch("/api/leaderboard?limit=10")
-      .then((res) => {
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        return res.json();
-      })
-      .then((users) => {
-        const labels = users.map((u) => u.discord_username);
-        const counts = users.map((u) => u.gif_count);
-        setChartData({ labels, counts });
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error("Graph error:", err.message);
-        setError(`Failed to load chart data: ${err.message}`);
-        setLoading(false);
-      });
-  }, []);
+  const chartData = users.length > 0
+    ? { labels: users.map((u) => u.discord_username), counts: users.map((u) => u.gif_count) }
+    : null;
 
-  // Create chart after canvas is rendered
   useEffect(() => {
     if (!chartData || !canvasRef.current) return;
 
@@ -98,7 +79,7 @@ export default function GraphBar() {
 
   if (loading) return <div>Loading chart...</div>;
   if (error) return <div style={{ color: "#ef4444", fontSize: "14px" }}>{error}</div>;
-  if (!chartData || chartData.labels.length === 0) return (
+  if (!chartData) return (
     <div style={styles.card}>
       <h2 style={styles.title}>Top Posters (Bar)</h2>
       <div style={styles.empty}>No data yet</div>

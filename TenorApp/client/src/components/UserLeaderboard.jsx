@@ -1,24 +1,7 @@
-import React from "react";
 import { useNavigate } from "react-router-dom";
 
-export default function UserLeaderboard() {
+export default function UserLeaderboard({ users, loading, error }) {
   const navigate = useNavigate();
-  const [users, setUsers] = React.useState([]);
-  const [loading, setLoading] = React.useState(true);
-  const [error, setError] = React.useState("");
-
-  React.useEffect(() => {
-    fetch("/api/leaderboard?limit=10")
-      .then((res) => {
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        return res.json();
-      })
-      .then((data) => setUsers(data))
-      .catch((e) => setError(e.message))
-      .finally(() => setLoading(false));
-  }, []);
-
-  const getRank = (index) => `${index + 1}.`;
 
   const renderUsername = (user) => (
     <button
@@ -44,7 +27,7 @@ export default function UserLeaderboard() {
       <div style={styles.leaderboard}>
         {users.map((user, idx) => (
           <div key={user.discord_username} style={styles.leaderboardItem}>
-            <span style={styles.rank}>{getRank(idx)}</span>
+            <span style={styles.rank}>{idx + 1}.</span>
             {renderUsername(user)}
             <span style={styles.count}>{user.gif_count} GIF{user.gif_count !== 1 ? 's' : ''}</span>
           </div>
@@ -80,17 +63,11 @@ const styles = {
     padding: "8px 12px",
     borderRadius: "8px",
     background: "#334155",
-    
   },
   rank: {
     fontSize: "18px",
     fontWeight: "bold",
     minWidth: "40px",
-  },
-  username: {
-    flex: 1,
-    fontSize: "16px",
-    color: "#f1f5f9",
   },
   usernameButton: {
     flex: 1,

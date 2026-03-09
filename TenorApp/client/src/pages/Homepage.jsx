@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import "../styles/Homepage.css";
 import TopGifs from "../components/topGifs.jsx";
 import UserLeaderboard from "../components/UserLeaderboard.jsx";
@@ -6,6 +7,20 @@ import Graph from "../components/graph.jsx";
 import GraphBar from "../components/graph-bar.jsx";
 
 const Homepage = () => {
+  const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    fetch("/api/leaderboard?limit=10")
+      .then((res) => {
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        return res.json();
+      })
+      .then((data) => setUsers(data))
+      .catch((e) => setError(e.message))
+      .finally(() => setLoading(false));
+  }, []);
 
   return (
     <main className="page" aria-labelledby="homepage-title">
@@ -18,10 +33,10 @@ const Homepage = () => {
       </header>
 
       <div className="stats-grid">
-        <UserLeaderboard />
-        <Graph />
+        <UserLeaderboard users={users} loading={loading} error={error} />
+        <Graph users={users} loading={loading} error={error} />
         <div className="bar-centered">
-          <GraphBar />
+          <GraphBar users={users} loading={loading} error={error} />
         </div>
         <PopularGifs />
       </div>
