@@ -2,7 +2,6 @@ import { useEffect, useRef } from "react";
 import Chart from "chart.js/auto";
 //i regret this already
 
-//TODO: make this look nice and not like a 5 year old made it in excel 1.4
 export default function Graph({ users, loading, error }) {
   const canvasRef = useRef(null);
   const chartRef = useRef(null);

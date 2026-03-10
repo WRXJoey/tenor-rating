@@ -15,10 +15,19 @@ export default function GraphLine() {
         return res.json();
       })
       .then((rows) => {
-        setChartData({
-          labels: rows.map((r) => r.day),
-          counts: rows.map((r) => Number(r.count)),
-        });
+        const countByDay = Object.fromEntries(
+          rows.map((r) => [r.day.slice(0, 10), Number(r.count)])
+        );
+        const labels = [];
+        const counts = [];
+        for (let i = 29; i >= 0; i--) {
+          const d = new Date();
+          d.setDate(d.getDate() - i);
+          const key = d.toISOString().slice(0, 10);
+          labels.push(d.toLocaleDateString("en-US", { month: "short", day: "numeric" }));
+          counts.push(countByDay[key] ?? 0);
+        }
+        setChartData({ labels, counts });
       })
       .catch((e) => setError(e.message))
       .finally(() => setLoading(false));
