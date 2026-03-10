@@ -5,6 +5,7 @@ import UserLeaderboard from "../components/UserLeaderboard.jsx";
 import PopularGifs from "../components/PopularGifs.jsx";
 import Graph from "../components/graph.jsx";
 import GraphBar from "../components/graph-bar.jsx";
+import GraphLine from "../components/GraphLine.jsx";
 
 const Homepage = () => {
   const [users, setUsers] = useState([]);
@@ -38,8 +39,12 @@ const Homepage = () => {
         <div className="bar-centered">
           <GraphBar users={users} loading={loading} error={error} />
         </div>
-        <PopularGifs />
+        <div className="full-centered">
+          <PopularGifs />
+        </div>
       </div>
+
+      <GraphLine />
 
       <TopGifs />
     </main>

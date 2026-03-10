@@ -93,6 +93,25 @@ app.get("/api/popular-gifs", async (req, res) => {
   }
 });
 
+// Activity over time (posts per day, last 30 days)
+app.get("/api/activity", async (_req, res) => {
+  try {
+    const { rows } = await pool.query(
+      `SELECT
+         DATE(posted_at) AS day,
+         COUNT(*) AS count
+       FROM tenor_logs
+       WHERE posted_at >= NOW() - INTERVAL '30 days'
+       GROUP BY day
+       ORDER BY day ASC`
+    );
+    res.json(rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Failed to fetch activity" });
+  }
+});
+
 // User detail page
 app.get("/api/users/:username", async (req, res) => {
   try {
