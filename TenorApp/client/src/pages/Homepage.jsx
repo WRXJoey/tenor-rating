@@ -6,6 +6,7 @@ import PopularGifs from "../components/PopularGifs.jsx";
 import Graph from "../components/graph.jsx";
 import GraphBar from "../components/graph-bar.jsx";
 import GraphLine from "../components/GraphLine.jsx";
+import StatsBanner from "../components/StatsBanner.jsx";
 
 const Homepage = () => {
   const [users, setUsers] = useState([]);
@@ -25,6 +26,8 @@ const Homepage = () => {
 
   return (
     <main className="page" aria-labelledby="homepage-title">
+      <StatsBanner />
+
       <header className="hero">
         <div>
           <h1 id="homepage-title" className="title">

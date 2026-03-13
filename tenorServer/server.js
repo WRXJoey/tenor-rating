@@ -13,7 +13,7 @@ app.use(cors());
 app.use(express.json());
 
 // Example route
-app.get("/", (req, res) => {
+app.get("/", (_req, res) => {
   res.send("Server is running");
 });
 
@@ -90,6 +90,38 @@ app.get("/api/popular-gifs", async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Failed to fetch popular GIFs" });
+  }
+});
+
+// Site-wide stats
+app.get("/api/stats", async (_req, res) => {
+  try {
+    const { rows } = await pool.query(
+      `SELECT
+         COUNT(*) AS total_gifs,
+         COUNT(DISTINCT discord_username) AS total_users,
+         DATE(posted_at) AS day,
+         COUNT(*) AS day_count
+       FROM tenor_logs
+       GROUP BY day
+       ORDER BY day_count DESC
+       LIMIT 1`
+    );
+    if (rows.length === 0) return res.json({ total_gifs: 0, total_users: 0, most_active_day: null });
+
+    const { rows: totals } = await pool.query(
+      `SELECT COUNT(*) AS total_gifs, COUNT(DISTINCT discord_username) AS total_users FROM tenor_logs`
+    );
+
+    res.json({
+      total_gifs: Number(totals[0].total_gifs),
+      total_users: Number(totals[0].total_users),
+      most_active_day: rows[0].day,
+      most_active_day_count: Number(rows[0].day_count),
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Failed to fetch stats" });
   }
 });
 
