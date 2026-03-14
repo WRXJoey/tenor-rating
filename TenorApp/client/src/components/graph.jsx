@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useMemo } from "react";
 import Chart from "chart.js/auto";
 //i regret this already
 
@@ -6,9 +6,11 @@ export default function Graph({ users, loading, error }) {
   const canvasRef = useRef(null);
   const chartRef = useRef(null);
 
-  const chartData = users.length > 0
-    ? { labels: users.map((u) => u.discord_username), counts: users.map((u) => u.gif_count) }
-    : null;
+  const chartData = useMemo(() =>
+    users.length > 0
+      ? { labels: users.map((u) => u.discord_username), counts: users.map((u) => u.gif_count) }
+      : null,
+  [users]);
 
   useEffect(() => {
     if (!chartData || !canvasRef.current) return;
