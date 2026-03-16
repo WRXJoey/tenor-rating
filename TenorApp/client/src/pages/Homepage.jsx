@@ -26,13 +26,13 @@ const Homepage = () => {
 
   return (
     <main className="page" aria-labelledby="homepage-title">
-      <StatsBanner />
 
       <header className="hero">
         <div>
           <h1 id="homepage-title" className="title">
             Welcome to Tenor Before its Gone.
           </h1>
+          <StatsBanner />
         </div>
       </header>
 

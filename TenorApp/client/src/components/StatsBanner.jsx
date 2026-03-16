@@ -49,8 +49,8 @@ const styles = {
     gap: "16px",
     background: "#1e293b",
     borderRadius: "12px",
-    padding: "20px 24px",
-    marginBottom: "24px",
+    padding: "28px 24px",
+    marginTop: "20px",
     boxShadow: "0 2px 8px rgba(0,0,0,0.4)",
   },
   item: {
