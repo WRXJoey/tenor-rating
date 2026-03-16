@@ -23,9 +23,9 @@ export default function StatsBanner() {
   };
 
   const items = [
+    { label: "Most Active Day", value: formatDay(stats.most_active_day) },
     { label: "Total GIFs", value: stats.total_gifs.toLocaleString() },
     { label: "Total Users", value: stats.total_users.toLocaleString() },
-    { label: "Most Active Day", value: formatDay(stats.most_active_day) },
     { label: "GIFs That Day", value: stats.most_active_day_count?.toLocaleString() ?? "—" },
   ];
 
@@ -47,11 +47,8 @@ const styles = {
     justifyContent: "space-around",
     flexWrap: "wrap",
     gap: "16px",
-    background: "#1e293b",
-    borderRadius: "12px",
     padding: "28px 24px",
     marginTop: "20px",
-    boxShadow: "0 2px 8px rgba(0,0,0,0.4)",
   },
   item: {
     display: "flex",
