@@ -66,17 +66,17 @@ client.on("messageCreate", async (message) => {
     return;
   }
   if(message.content.trim() === '!j help') {
-    message.channel.send('Commands:\n!j ping - Check bot responsiveness\n!j stats - Get total logged Tenor GIFs\n!j help - Show this help message');
+    message.channel.send('Commands:\n!j ping - Check bot responsiveness\n!j stats - Get total logged Tenor GIFs\n!j recent - Show the 5 most recently posted GIFs\n!j leaderboard - Show the top 5 GIF posters\n!j help - Show this help message');
     return;
   }
   if(message.content.trim() === '!j recent') {
     try {
-      const res = await pool.query('SELECT discord_username, tenor_gif_id FROM tenor_logs ORDER BY id DESC LIMIT 5');
+      const res = await pool.query('SELECT discord_username, tenor_url FROM tenor_logs ORDER BY id DESC LIMIT 5');
       if (res.rows.length === 0) {
         message.channel.send('No Tenor GIFs logged yet.');
         return;
       }
-      const recentGifs = res.rows.map(row => `${row.discord_username}: https://tenor.com/view/${row.tenor_gif_id}`).join('\n');
+      const recentGifs = res.rows.map(row => `${row.discord_username}: ${row.tenor_url}`).join('\n');
       message.channel.send(`Recent Tenor GIFs:\n${recentGifs}`);
     } catch (err) {
       console.error("DB query failed:", err);
@@ -85,7 +85,25 @@ client.on("messageCreate", async (message) => {
     return;
   }
 
-    if(message.content.trim().startsWith('!j')) {
+    if(message.content.trim() === '!j leaderboard') {
+    try {
+      const res = await pool.query(
+        'SELECT discord_username, COUNT(*) as gif_count FROM tenor_logs GROUP BY discord_username ORDER BY gif_count DESC LIMIT 5'
+      );
+      if (res.rows.length === 0) {
+        message.channel.send('No GIFs logged yet.');
+        return;
+      }
+      const board = res.rows.map((row, i) => `${i + 1}. ${row.discord_username} — ${row.gif_count} GIFs`).join('\n');
+      message.channel.send(`**Top GIF Posters:**\n${board}`);
+    } catch (err) {
+      console.error("DB query failed:", err);
+      message.channel.send('Error retrieving leaderboard.');
+    }
+    return;
+  }
+
+  if(message.content.trim().startsWith('!j')) {
     message.channel.send('Unknown command. Type !j help for a list of commands.');
     return;
   }
