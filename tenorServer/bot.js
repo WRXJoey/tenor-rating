@@ -3,7 +3,7 @@ import { pool } from "./db.js";
 import dotenv from "dotenv";
 dotenv.config();
 
-//just got news that discord is getting rid of tenor, hopefully this bot will still be useful or can be adapted F*CK 
+//just got news that discord is getting rid of tenor, hopefully this bot will still be useful or can be adapted F*CK
 
 const client = new Client({
   intents: [
@@ -21,12 +21,66 @@ function extractTenorFromEmbeds(message) {
 
   return {
     tenorGifId: embed.url?.match(/-(\d+)/)?.[1] ?? null,
-    tenorUrl:
-      embed.video?.url ||
-      embed.thumbnail?.url ||
-      null,
+    tenorUrl: embed.video?.url || embed.thumbnail?.url || null,
   };
 }
+
+// Command definitions — each entry has a description (for !j help) and a handler
+const COMMANDS = {
+  ping: {
+    desc: "Check bot responsiveness",
+    run: async (message) => {
+      message.channel.send("Pong!");
+    },
+  },
+  stats: {
+    desc: "Total GIFs logged",
+    run: async (message) => {
+      const res = await pool.query("SELECT COUNT(*) FROM tenor_logs");
+      message.channel.send(`Total Tenor GIFs logged: ${res.rows[0].count}`);
+    },
+  },
+  recent: {
+    desc: "Show the 5 most recently posted GIFs",
+    run: async (message) => {
+      const res = await pool.query(
+        "SELECT discord_username, tenor_url FROM tenor_logs ORDER BY id DESC LIMIT 5"
+      );
+      if (res.rows.length === 0) {
+        message.channel.send("No Tenor GIFs logged yet.");
+        return;
+      }
+      const lines = res.rows.map(row => `${row.discord_username}: ${row.tenor_url}`).join("\n");
+      message.channel.send(`Recent Tenor GIFs:\n${lines}`);
+    },
+  },
+  leaderboard: {
+    desc: "Show the top 5 GIF posters",
+    run: async (message) => {
+      const res = await pool.query(
+        "SELECT discord_username, COUNT(*) as gif_count FROM tenor_logs GROUP BY discord_username ORDER BY gif_count DESC LIMIT 5"
+      );
+      if (res.rows.length === 0) {
+        message.channel.send("No GIFs logged yet.");
+        return;
+      }
+      const board = res.rows
+        .map((row, i) => `${i + 1}. ${row.discord_username} — ${row.gif_count} GIFs`)
+        .join("\n");
+      message.channel.send(`**Top GIF Posters:**\n${board}`);
+    },
+  },
+  help: {
+    desc: "Show this help message",
+    run: async (message) => {
+      const lines = Object.entries(COMMANDS)
+        .map(([name, cmd]) => `!j ${name} - ${cmd.desc}`)
+        .join("\n");
+      message.channel.send(`Commands:\n${lines}`);
+    },
+  },
+};
+
 client.once("ready", () => {
   console.log(`Logged in as ${client.user.tag}`);
 });
@@ -34,99 +88,36 @@ client.once("ready", () => {
 client.on("messageCreate", async (message) => {
   if (message.author.bot) return;
 
-  // Debug: Log all messages
-  console.log(`[MSG] ${message.author.username}: ${message.content || '(no content)'}`);
+  const content = message.content.trim();
 
-  // Debug: Check if message has embeds
-  if (message.embeds.length > 0) {
-    console.log(`[EMBEDS] Found ${message.embeds.length} embed(s)`);
-    message.embeds.forEach((embed, idx) => {
-      console.log(`  Embed ${idx}:`, {
-        provider: embed.provider?.name,
-        url: embed.url,
-        hasVideo: !!embed.video,
-        hasThumbnail: !!embed.thumbnail
-      });
-    });
-  }
+  if (content.startsWith("!j")) {
+    const commandName = content.slice(2).trim();
+    const command = COMMANDS[commandName];
 
-  if(message.content.trim() === '!j ping') {
-    message.channel.send('Pong!');
-    return;
-  }
-  if(message.content.trim() === '!j stats') {
-    try {
-      const res = await pool.query('SELECT COUNT(*) FROM tenor_logs');
-      const count = res.rows[0].count;
-      message.channel.send(`Total Tenor GIFs logged: ${count}`);
-    } catch (err) {
-      console.error("DB query failed:", err);
-      message.channel.send('Error retrieving stats.');
-    }
-    return;
-  }
-  if(message.content.trim() === '!j help') {
-    message.channel.send('Commands:\n!j ping - Check bot responsiveness\n!j stats - Get total logged Tenor GIFs\n!j recent - Show the 5 most recently posted GIFs\n!j leaderboard - Show the top 5 GIF posters\n!j help - Show this help message');
-    return;
-  }
-  if(message.content.trim() === '!j recent') {
-    try {
-      const res = await pool.query('SELECT discord_username, tenor_url FROM tenor_logs ORDER BY id DESC LIMIT 5');
-      if (res.rows.length === 0) {
-        message.channel.send('No Tenor GIFs logged yet.');
-        return;
+    if (command) {
+      try {
+        await command.run(message);
+      } catch (err) {
+        console.error(`Command !j ${commandName} failed:`, err);
+        message.channel.send("Something went wrong. Try again later.");
       }
-      const recentGifs = res.rows.map(row => `${row.discord_username}: ${row.tenor_url}`).join('\n');
-      message.channel.send(`Recent Tenor GIFs:\n${recentGifs}`);
-    } catch (err) {
-      console.error("DB query failed:", err);
-      message.channel.send('Error retrieving recent GIFs.');
+    } else {
+      message.channel.send("Unknown command. Type !j help for a list of commands.");
     }
-    return;
-  }
-
-    if(message.content.trim() === '!j leaderboard') {
-    try {
-      const res = await pool.query(
-        'SELECT discord_username, COUNT(*) as gif_count FROM tenor_logs GROUP BY discord_username ORDER BY gif_count DESC LIMIT 5'
-      );
-      if (res.rows.length === 0) {
-        message.channel.send('No GIFs logged yet.');
-        return;
-      }
-      const board = res.rows.map((row, i) => `${i + 1}. ${row.discord_username} — ${row.gif_count} GIFs`).join('\n');
-      message.channel.send(`**Top GIF Posters:**\n${board}`);
-    } catch (err) {
-      console.error("DB query failed:", err);
-      message.channel.send('Error retrieving leaderboard.');
-    }
-    return;
-  }
-
-  if(message.content.trim().startsWith('!j')) {
-    message.channel.send('Unknown command. Type !j help for a list of commands.');
     return;
   }
 
   const tenor = extractTenorFromEmbeds(message);
-  console.log('[TENOR]', tenor ? 'Detected Tenor GIF' : 'No Tenor GIF found');
-
   if (!tenor || !tenor.tenorUrl) return;
 
+  console.log(`[TENOR] ${message.author.username}: ${tenor.tenorGifId}`);
   await saveTenorGif(message.author.username, tenor);
 });
 
 async function saveTenorGif(username, tenor) {
-  console.log('[INSERT] Attempting to save:', {
-    username,
-    gifId: tenor.tenorGifId,
-    url: tenor.tenorUrl.substring(0, 50) + '...'
-  });
-
   try {
     const result = await pool.query(
-      `INSERT INTO tenor_logs
-       (discord_username, tenor_url, tenor_gif_id)
+      `INSERT INTO tenor_logs (discord_username, tenor_url, tenor_gif_id)
        VALUES ($1, $2, $3)
        ON CONFLICT DO NOTHING
        RETURNING id`,
@@ -150,7 +141,8 @@ client.on("messageUpdate", async (oldMessage, newMessage) => {
   const tenor = extractTenorFromEmbeds(newMessage);
   if (!tenor || !tenor.tenorUrl) return;
 
-  console.log('[TENOR] Detected Tenor GIF via messageUpdate');
+  console.log("[TENOR] Detected Tenor GIF via messageUpdate");
   await saveTenorGif(newMessage.author.username, tenor);
 });
+
 client.login(process.env.DISCORD_TOKEN);

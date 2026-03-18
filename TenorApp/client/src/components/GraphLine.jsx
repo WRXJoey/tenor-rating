@@ -1,10 +1,10 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useMemo } from "react";
 import Chart from "chart.js/auto";
 
 export default function GraphLine() {
   const canvasRef = useRef(null);
   const chartRef = useRef(null);
-  const [chartData, setChartData] = useState(null);
+  const [rows, setRows] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -14,24 +14,29 @@ export default function GraphLine() {
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         return res.json();
       })
-      .then((rows) => {
-        const countByDay = Object.fromEntries(
-          rows.map((r) => [r.day.slice(0, 10), Number(r.count)])
-        );
-        const labels = [];
-        const counts = [];
-        for (let i = 29; i >= 0; i--) {
-          const d = new Date();
-          d.setDate(d.getDate() - i);
-          const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
-          labels.push(d.toLocaleDateString("en-US", { month: "short", day: "numeric" }));
-          counts.push(countByDay[key] ?? 0);
-        }
-        setChartData({ labels, counts });
-      })
+      .then(setRows)
       .catch((e) => setError(e.message))
       .finally(() => setLoading(false));
   }, []);
+
+  // Fill in all 30 days so gaps show as 0, and format labels as "Mar 1"
+  const chartData = useMemo(() => {
+    if (!rows) return null;
+
+    const countByDay = Object.fromEntries(
+      rows.map((r) => [r.day.slice(0, 10), Number(r.count)])
+    );
+    const labels = [];
+    const counts = [];
+    for (let i = 29; i >= 0; i--) {
+      const d = new Date();
+      d.setDate(d.getDate() - i);
+      const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+      labels.push(d.toLocaleDateString("en-US", { month: "short", day: "numeric" }));
+      counts.push(countByDay[key] ?? 0);
+    }
+    return { labels, counts };
+  }, [rows]);
 
   useEffect(() => {
     if (!chartData || !canvasRef.current) return;

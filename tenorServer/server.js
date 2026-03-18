@@ -98,26 +98,25 @@ app.get("/api/stats", async (_req, res) => {
   try {
     const { rows } = await pool.query(
       `SELECT
-         COUNT(*) AS total_gifs,
-         COUNT(DISTINCT discord_username) AS total_users,
-         DATE(posted_at) AS day,
-         COUNT(*) AS day_count
+         (SELECT COUNT(*) FROM tenor_logs) AS total_gifs,
+         (SELECT COUNT(DISTINCT discord_username) FROM tenor_logs) AS total_users,
+         DATE(posted_at) AS most_active_day,
+         COUNT(*) AS most_active_day_count
        FROM tenor_logs
-       GROUP BY day
-       ORDER BY day_count DESC
+       GROUP BY DATE(posted_at)
+       ORDER BY most_active_day_count DESC
        LIMIT 1`
     );
-    if (rows.length === 0) return res.json({ total_gifs: 0, total_users: 0, most_active_day: null });
 
-    const { rows: totals } = await pool.query(
-      `SELECT COUNT(*) AS total_gifs, COUNT(DISTINCT discord_username) AS total_users FROM tenor_logs`
-    );
+    if (rows.length === 0) {
+      return res.json({ total_gifs: 0, total_users: 0, most_active_day: null, most_active_day_count: 0 });
+    }
 
     res.json({
-      total_gifs: Number(totals[0].total_gifs),
-      total_users: Number(totals[0].total_users),
-      most_active_day: rows[0].day,
-      most_active_day_count: Number(rows[0].day_count),
+      total_gifs: Number(rows[0].total_gifs),
+      total_users: Number(rows[0].total_users),
+      most_active_day: rows[0].most_active_day,
+      most_active_day_count: Number(rows[0].most_active_day_count),
     });
   } catch (err) {
     console.error(err);
