@@ -64,10 +64,18 @@ const COMMANDS = {
         message.channel.send("No GIFs logged yet.");
         return;
       }
+      const medals = ["🥇", "🥈", "🥉"];
       const board = res.rows
-        .map((row, i) => `${i + 1}. ${row.discord_username} — ${row.gif_count} GIFs`)
+        .map((row, i) => `${medals[i] || `${i + 1}.`} **${row.discord_username}** — ${row.gif_count} GIFs`)
         .join("\n");
-      message.channel.send(`**Top GIF Posters:**\n${board}`);
+      const embed = {
+        color: 0xf4a261,
+        title: "🏆 Top GIF Posters",
+        description: board,
+        footer: { text: "!j leaderboard" },
+        timestamp: new Date().toISOString(),
+      };
+      message.channel.send({ embeds: [embed] });
     },
   },
   help: {
