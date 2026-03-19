@@ -25,15 +25,17 @@ function extractTenorFromEmbeds(message) {
   };
 }
 
-// Command definitions — each entry has a description (for !j help) and a handler
+
 const COMMANDS = {
   ping: {
+    //!j ping
     desc: "Check bot responsiveness",
     run: async (message) => {
       message.channel.send("Pong!");
     },
   },
   stats: {
+    //!j stats
     desc: "Total GIFs logged",
     run: async (message) => {
       const res = await pool.query("SELECT COUNT(*) FROM tenor_logs");
@@ -41,6 +43,7 @@ const COMMANDS = {
     },
   },
   recent: {
+    //!j recent
     desc: "Show the 5 most recently posted GIFs",
     run: async (message) => {
       const res = await pool.query(
@@ -55,6 +58,7 @@ const COMMANDS = {
     },
   },
   leaderboard: {
+    //!j leaderboard
     desc: "Show the top 5 GIF posters",
     run: async (message) => {
       const res = await pool.query(
@@ -79,6 +83,7 @@ const COMMANDS = {
     },
   },
   help: {
+    //!j help
     desc: "Show this help message",
     run: async (message) => {
       const lines = Object.entries(COMMANDS)
