@@ -57,6 +57,21 @@ const COMMANDS = {
       message.channel.send(`Recent Tenor GIFs:\n${lines}`);
     },
   },
+  random: {
+    //!j random 
+    desc: "Post a random GIF from the logs",
+    run: async (message) => {
+      const res = await pool.query(
+        "SELECT discord_username, tenor_url FROM tenor_logs ORDER BY RANDOM() LIMIT 1"
+      );
+      if (res.rows.length === 0) {
+        message.channel.send("No GIFs logged yet.");
+        return;
+      }
+      const { discord_username, tenor_url } = res.rows[0];
+      message.channel.send(`🎲 Random GIF from **${discord_username}**:\n${tenor_url}`);
+    },
+  },
   leaderboard: {
     //!j leaderboard
     desc: "Show the top 5 GIF posters",
