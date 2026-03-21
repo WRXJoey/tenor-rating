@@ -69,7 +69,7 @@ const COMMANDS = {
         return;
       }
       const { discord_username, tenor_url } = res.rows[0];
-      message.channel.send(`🎲 Random GIF from **${discord_username}**:\n${tenor_url}`);
+      message.channel.send(`Random GIF from **${discord_username}**:\n${tenor_url}`);
     },
   },
   leaderboard: {
