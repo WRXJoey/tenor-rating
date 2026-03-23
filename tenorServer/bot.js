@@ -35,11 +35,32 @@ const COMMANDS = {
     },
   },
   stats: {
-    //!j stats
-    desc: "Total GIFs logged",
-    run: async (message) => {
-      const res = await pool.query("SELECT COUNT(*) FROM tenor_logs");
-      message.channel.send(`Total Tenor GIFs logged: ${res.rows[0].count}`);
+    //!j stats [username]
+    desc: "Total GIFs logged, or stats for a specific user",
+    run: async (message, args) => {
+      if (args.length > 0) {
+        const username = args.join(" ");
+        const res = await pool.query(
+          `SELECT
+             COUNT(*) AS total,
+             MIN(posted_at) AS first_post,
+             MAX(posted_at) AS last_post
+           FROM tenor_logs
+           WHERE discord_username = $1`,
+          [username]
+        );
+        const row = res.rows[0];
+        if (!row || Number(row.total) === 0) {
+          message.channel.send(`No GIFs found for **${username}**.`);
+          return;
+        }
+        const first = new Date(row.first_post).toLocaleDateString("en-US");
+        const last = new Date(row.last_post).toLocaleDateString("en-US");
+        message.channel.send(`**${username}**\n${row.total} GIFs posted\nFirst: ${first}\nLast: ${last}`);
+      } else {
+        const res = await pool.query("SELECT COUNT(*) FROM tenor_logs");
+        message.channel.send(`Total Tenor GIFs logged: ${res.rows[0].count}`);
+      }
     },
   },
   recent: {
@@ -104,7 +125,7 @@ const COMMANDS = {
       const lines = Object.entries(COMMANDS)
         .map(([name, cmd]) => `!j ${name} - ${cmd.desc}`)
         .join("\n");
-      message.channel.send(`Commands:\n${lines}`);
+      message.channel.send(`Commands:\n${lines}\n\nTip: !j stats <username> to look up a specific user`);
     },
   },
 };
@@ -119,12 +140,14 @@ client.on("messageCreate", async (message) => {
   const content = message.content.trim();
 
   if (content.startsWith("!j")) {
-    const commandName = content.slice(2).trim();
+    const parts = content.slice(2).trim().split(/\s+/);
+    const commandName = parts[0];
+    const args = parts.slice(1);
     const command = COMMANDS[commandName];
 
     if (command) {
       try {
-        await command.run(message);
+        await command.run(message, args);
       } catch (err) {
         console.error(`Command !j ${commandName} failed:`, err);
         message.channel.send("Something went wrong. Try again later.");
