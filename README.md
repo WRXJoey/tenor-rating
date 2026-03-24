@@ -20,7 +20,9 @@ A Discord bot that logs Tenor GIFs posted by users and displays stats on a web d
 |---|---|
 | `!j ping` | Check bot responsiveness |
 | `!j stats` | Total GIFs logged |
+| `!j stats <username>` | Stats for a specific user |
 | `!j recent` | 5 most recently posted GIFs |
+| `!j random` | Post a random GIF from the logs |
 | `!j leaderboard` | Top 5 GIF posters |
 | `!j help` | List commands |
 

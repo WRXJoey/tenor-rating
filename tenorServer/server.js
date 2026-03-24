@@ -151,48 +151,50 @@ app.get("/api/users/:username", async (req, res) => {
       return res.status(400).json({ error: "Username requires characters" });
     }
 
-    const { rows: allPosts } = await pool.query(
-      `SELECT
-         tenor_gif_id,
-         tenor_url,
-         posted_at
-       FROM tenor_logs
-       WHERE discord_username = $1
-       ORDER BY posted_at DESC`,
-      [username]
-    );
+    const [statsResult, postsResult, favoriteGifsResult] = await Promise.all([
+      pool.query(
+        `SELECT COUNT(*) AS total_gifs, MIN(posted_at) AS first_post, MAX(posted_at) AS last_post
+         FROM tenor_logs
+         WHERE discord_username = $1`,
+        [username]
+      ),
+      pool.query(
+        `SELECT tenor_gif_id, tenor_url, posted_at
+         FROM tenor_logs
+         WHERE discord_username = $1
+         ORDER BY posted_at DESC
+         LIMIT 20`,
+        [username]
+      ),
+      pool.query(
+        `SELECT
+           tenor_gif_id,
+           tenor_url,
+           COUNT(*) as count,
+           MAX(posted_at) as last_posted
+         FROM tenor_logs
+         WHERE discord_username = $1 AND tenor_gif_id IS NOT NULL
+         GROUP BY tenor_gif_id, tenor_url
+         HAVING COUNT(*) >= 2
+         ORDER BY count DESC, last_posted DESC
+         LIMIT 10`,
+        [username]
+      ),
+    ]);
 
-    if (allPosts.length === 0) {
+    if (Number(statsResult.rows[0].total_gifs) === 0) {
       return res.status(404).json({ error: "User not found" });
     }
 
-    // Get user stats
-    const firstPost = allPosts[allPosts.length - 1].posted_at;
-    const lastPost = allPosts[0].posted_at;
-    const totalGifs = allPosts.length;
-
-    const { rows: favoriteGifs } = await pool.query(
-      `SELECT
-         tenor_gif_id,
-         tenor_url,
-         COUNT(*) as count,
-         MAX(posted_at) as last_posted
-       FROM tenor_logs
-       WHERE discord_username = $1 AND tenor_gif_id IS NOT NULL
-       GROUP BY tenor_gif_id, tenor_url
-       HAVING COUNT(*) >= 2
-       ORDER BY count DESC, last_posted DESC
-       LIMIT 10`,
-      [username]
-    );
+    const { total_gifs, first_post, last_post } = statsResult.rows[0];
 
     res.json({
       discord_username: username,
-      total_gifs: totalGifs,
-      first_post: firstPost,
-      last_post: lastPost,
-      all_posts: allPosts,
-      favorite_gifs: favoriteGifs,
+      total_gifs: Number(total_gifs),
+      first_post,
+      last_post,
+      all_posts: postsResult.rows,
+      favorite_gifs: favoriteGifsResult.rows,
     });
   } catch (err) {
     console.error(err);

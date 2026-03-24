@@ -10,6 +10,7 @@ export default function TopGifs() {
   const [loadingMore, setLoadingMore] = React.useState(false);
   const [error, setError] = React.useState("");
   const [hasMore, setHasMore] = React.useState(true);
+  const [filter, setFilter] = React.useState("");
 
   React.useEffect(() => {
     if (!open || rows.length > 0) return;
@@ -76,7 +77,14 @@ export default function TopGifs() {
           {!loading && !error && rows.length === 0 && <p style={{ color: "#94a3b8" }}>No GIFs Found :(</p>}
           {rows.length > 0 && (
             <>
-              <table style={{ width: "100%", borderCollapse: "collapse", marginTop: 16 }}>
+              <input
+                type="text"
+                placeholder="Filter by username..."
+                value={filter}
+                onChange={(e) => setFilter(e.target.value)}
+                style={{ marginTop: 16, padding: "6px 12px", borderRadius: 6, border: "1px solid #334155", background: "#0f172a", color: "#f1f5f9", fontSize: 14, width: "200px" }}
+              />
+              <table style={{ width: "100%", borderCollapse: "collapse", marginTop: 12 }}>
                 <thead>
                   <tr>
                     {["Discord User", "Posted", "URL", "GIF"].map((col) => (
@@ -87,7 +95,7 @@ export default function TopGifs() {
                   </tr>
                 </thead>
                 <tbody>
-                  {rows.map((r) => (
+                  {rows.filter(r => r.discord_username.toLowerCase().includes(filter.toLowerCase())).map((r) => (
                     <tr key={r.id}>
                       <td style={{ padding: 8, borderBottom: "1px solid #334155", color: "#f1f5f9" }}>
                         {r.discord_username}
