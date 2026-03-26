@@ -1,15 +1,24 @@
 import { useEffect, useRef, useState, useMemo } from "react";
 import Chart from "chart.js/auto";
 
+const RANGES = [
+  { label: "7d", days: 7 },
+  { label: "30d", days: 30 },
+  { label: "365d", days: 365 },
+];
+
 export default function GraphLine() {
   const canvasRef = useRef(null);
   const chartRef = useRef(null);
   const [rows, setRows] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [days, setDays] = useState(30);
 
   useEffect(() => {
-    fetch("/api/activity")
+    setLoading(true);
+    setRows(null);
+    fetch(`/api/activity?days=${days}`)
       .then((res) => {
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         return res.json();
@@ -17,9 +26,9 @@ export default function GraphLine() {
       .then(setRows)
       .catch((e) => setError(e.message))
       .finally(() => setLoading(false));
-  }, []);
+  }, [days]);
 
-  // Fill in all 30 days so gaps show as 0, and format labels as "Mar 1"
+  // Fill in the full date range so gaps show as 0, and format labels as "Mar 1"
   const chartData = useMemo(() => {
     if (!rows) return null;
 
@@ -28,7 +37,7 @@ export default function GraphLine() {
     );
     const labels = [];
     const counts = [];
-    for (let i = 29; i >= 0; i--) {
+    for (let i = days - 1; i >= 0; i--) {
       const d = new Date();
       d.setDate(d.getDate() - i);
       const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
@@ -36,7 +45,7 @@ export default function GraphLine() {
       counts.push(countByDay[key] ?? 0);
     }
     return { labels, counts };
-  }, [rows]);
+  }, [rows, days]);
 
   useEffect(() => {
     if (!chartData || !canvasRef.current) return;
@@ -55,7 +64,7 @@ export default function GraphLine() {
             borderColor: "#0ea5a4",
             backgroundColor: "rgba(14, 165, 164, 0.15)",
             borderWidth: 2,
-            pointRadius: 3,
+            pointRadius: days <= 30 ? 3 : 1,
             pointBackgroundColor: "#0ea5a4",
             fill: true,
             tension: 0.3,
@@ -73,7 +82,7 @@ export default function GraphLine() {
             grid: { color: "rgba(255,255,255,0.05)" },
             ticks: {
               color: "#94a3b8",
-              maxTicksLimit: 10,
+              maxTicksLimit: days <= 30 ? 10 : 12,
               maxRotation: 0,
             },
           },
@@ -94,19 +103,32 @@ export default function GraphLine() {
     };
   }, [chartData]);
 
-  if (loading) return <div>Loading chart...</div>;
+  const title = `Activity (Last ${days === 365 ? "Year" : `${days} Days`})`;
+
   if (error) return <div style={{ color: "#ef4444", fontSize: "14px" }}>{error}</div>;
-  if (!chartData || chartData.labels.length === 0) return (
-    <div style={styles.card}>
-      <h2 style={styles.title}>Activity (Last 30 Days)</h2>
-      <div style={styles.empty}>No data yet</div>
-    </div>
-  );
 
   return (
     <div style={styles.card}>
-      <h2 style={styles.title}>Activity (Last 30 Days)</h2>
-      <canvas ref={canvasRef}></canvas>
+      <div style={styles.header}>
+        <h2 style={styles.title}>{title}</h2>
+        <div style={styles.toggle}>
+          {RANGES.map(({ label, days: d }) => (
+            <button
+              key={d}
+              onClick={() => setDays(d)}
+              style={{ ...styles.toggleBtn, ...(days === d ? styles.toggleBtnActive : {}) }}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+      </div>
+      {loading
+        ? <div style={styles.empty}>Loading...</div>
+        : !chartData || chartData.counts.every(c => c === 0)
+          ? <div style={styles.empty}>No data yet</div>
+          : <canvas ref={canvasRef}></canvas>
+      }
     </div>
   );
 }
@@ -119,11 +141,36 @@ const styles = {
     boxShadow: "0 2px 8px rgba(0,0,0,0.4)",
     marginBottom: "24px",
   },
+  header: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginBottom: "16px",
+    flexWrap: "wrap",
+    gap: "12px",
+  },
   title: {
-    margin: "0 0 16px 0",
+    margin: 0,
     fontSize: "25px",
     color: "#f1f5f9",
-    textAlign: "center",
+  },
+  toggle: {
+    display: "flex",
+    gap: "6px",
+  },
+  toggleBtn: {
+    background: "#334155",
+    color: "#94a3b8",
+    border: "none",
+    padding: "4px 12px",
+    borderRadius: "6px",
+    cursor: "pointer",
+    fontSize: "13px",
+    fontWeight: "500",
+  },
+  toggleBtnActive: {
+    background: "#0ea5a4",
+    color: "#f1f5f9",
   },
   empty: {
     textAlign: "center",
