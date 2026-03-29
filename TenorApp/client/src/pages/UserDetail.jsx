@@ -101,9 +101,9 @@ export default function UserDetail() {
         </div>
 
         <div style={styles.section}>
-          <h2 style={styles.sectionTitle}>Posting Timeline (Last 10)</h2>
+          <h2 style={styles.sectionTitle}>Posting Timeline (Recent {(userData.all_posts ?? []).length})</h2>
           <div style={styles.timeline}>
-            {(userData.all_posts ?? []).slice(-10).map((post) => (
+            {(userData.all_posts ?? []).map((post) => (
               <div key={`${post.tenor_gif_id}-${post.posted_at}`} style={styles.timelineItem}>
                 <div style={styles.timelineDot}></div>
                 <div style={styles.timelineContent}>

@@ -23,11 +23,18 @@ A Discord bot that logs Tenor GIFs posted by users and displays stats on a web d
 | `!j stats <username>` | Stats for a specific user |
 | `!j recent` | 5 most recently posted GIFs |
 | `!j random` | Post a random GIF from the logs |
+| `!j random <username>` | Post a random GIF from a specific user |
 | `!j leaderboard` | Top 5 GIF posters |
 | `!j help` | List commands |
 
 ## Setup (if you really want to run it currently, no plans to deploy anything yet)
 
-1. Create a `.env` file in `tenorServer/` with `DISCORD_TOKEN` and `PGPASSWORD`
+1. Create a `.env` file in `tenorServer/` with the following variables:
+   - `DISCORD_TOKEN` — your bot token from the Discord developer portal
+   - `PGPASSWORD` — your PostgreSQL password
+   - `PGUSER` — your PostgreSQL username
+   - `PGHOST` — database host (e.g. `localhost`)
+   - `PGPORT` — database port (default `5432`)
+   - `PGDATABASE` — database name
 2. Run `npm install` in the root, `tenorServer/`, and `TenorApp/client/`
 3. Run `npm run dev` from the root to start everything (server, bot, and frontend)

@@ -79,14 +79,20 @@ const COMMANDS = {
     },
   },
   random: {
-    //!j random 
-    desc: "Post a random GIF from the logs",
-    run: async (message) => {
-      const res = await pool.query(
-        "SELECT discord_username, tenor_url FROM tenor_logs ORDER BY RANDOM() LIMIT 1"
-      );
+    //!j random [username]
+    desc: "Post a random GIF from the logs, optionally from a specific user",
+    run: async (message, args) => {
+      const username = args.join(" ") || null;
+      const res = username
+        ? await pool.query(
+            "SELECT discord_username, tenor_url FROM tenor_logs WHERE discord_username = $1 ORDER BY RANDOM() LIMIT 1",
+            [username]
+          )
+        : await pool.query(
+            "SELECT discord_username, tenor_url FROM tenor_logs ORDER BY RANDOM() LIMIT 1"
+          );
       if (res.rows.length === 0) {
-        message.channel.send("No GIFs logged yet.");
+        message.channel.send(username ? `No GIFs found for **${username}**.` : "No GIFs logged yet.");
         return;
       }
       const { discord_username, tenor_url } = res.rows[0];
