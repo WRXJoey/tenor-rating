@@ -128,16 +128,29 @@ app.get("/api/stats", async (_req, res) => {
 app.get("/api/activity", async (req, res) => {
   try {
     const days = Math.min(Math.max(parseInt(req.query.days) || 30, 1), 365);
-    const { rows } = await pool.query(
-      `SELECT
-         DATE(posted_at) AS day,
-         COUNT(*) AS count
-       FROM tenor_logs
-       WHERE posted_at >= NOW() - INTERVAL '1 day' * $1
-       GROUP BY day
-       ORDER BY day ASC`,
-      [days]
-    );
+    const username = req.query.username || null;
+    const { rows } = username
+      ? await pool.query(
+          `SELECT
+             DATE(posted_at) AS day,
+             COUNT(*) AS count
+           FROM tenor_logs
+           WHERE posted_at >= NOW() - INTERVAL '1 day' * $1
+             AND discord_username = $2
+           GROUP BY day
+           ORDER BY day ASC`,
+          [days, username]
+        )
+      : await pool.query(
+          `SELECT
+             DATE(posted_at) AS day,
+             COUNT(*) AS count
+           FROM tenor_logs
+           WHERE posted_at >= NOW() - INTERVAL '1 day' * $1
+           GROUP BY day
+           ORDER BY day ASC`,
+          [days]
+        );
     res.json(rows);
   } catch (err) {
     console.error(err);

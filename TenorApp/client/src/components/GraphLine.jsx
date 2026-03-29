@@ -7,7 +7,7 @@ const RANGES = [
   { label: "365d", days: 365 },
 ];
 
-export default function GraphLine() {
+export default function GraphLine({ username = null }) {
   const canvasRef = useRef(null);
   const chartRef = useRef(null);
   const [rows, setRows] = useState(null);
@@ -18,7 +18,10 @@ export default function GraphLine() {
   useEffect(() => {
     setLoading(true);
     setRows(null);
-    fetch(`/api/activity?days=${days}`)
+    const url = username
+      ? `/api/activity?days=${days}&username=${encodeURIComponent(username)}`
+      : `/api/activity?days=${days}`;
+    fetch(url)
       .then((res) => {
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         return res.json();
@@ -26,7 +29,7 @@ export default function GraphLine() {
       .then(setRows)
       .catch((e) => setError(e.message))
       .finally(() => setLoading(false));
-  }, [days]);
+  }, [days, username]);
 
   // Fill in the full date range so gaps show as 0, and format labels as "Mar 1"
   const chartData = useMemo(() => {

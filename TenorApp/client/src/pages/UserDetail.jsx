@@ -1,6 +1,7 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { getRelativeTime } from "../utils/timeUtils.js";
+import GraphLine from "../components/GraphLine.jsx";
 
 export default function UserDetail() {
   const { username } = useParams();
@@ -99,6 +100,8 @@ export default function UserDetail() {
             <div style={styles.statValue}>{calculateAvgPostsPerDay()}</div>
           </div>
         </div>
+
+        <GraphLine username={userData.discord_username} />
 
         <div style={styles.section}>
           <h2 style={styles.sectionTitle}>Posting Timeline (Recent {(userData.all_posts ?? []).length})</h2>

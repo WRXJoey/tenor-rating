@@ -7,6 +7,7 @@ import Graph from "../components/graph.jsx";
 import GraphBar from "../components/graph-bar.jsx";
 import GraphLine from "../components/GraphLine.jsx";
 import StatsBanner from "../components/StatsBanner.jsx";
+import UserSearch from "../components/UserSearch.jsx";
 
 const Homepage = () => {
   const [users, setUsers] = useState([]);
@@ -46,6 +47,8 @@ const Homepage = () => {
           <PopularGifs />
         </div>
       </div>
+
+      <UserSearch />
 
       <GraphLine />
 
